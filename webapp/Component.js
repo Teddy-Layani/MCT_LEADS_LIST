@@ -29,6 +29,13 @@ sap.ui.define([
 
                 // set the device model
                 this.setModel(models.createDeviceModel(), "device");
+
+                //  Models Initialization
+                this.initModels();
+            },
+
+            initModels: function() {
+                this.setModel(models.viewModel("main"), "mainView");
             }
         });
     }

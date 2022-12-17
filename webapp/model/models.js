@@ -18,6 +18,26 @@ sap.ui.define([
                 var oModel = new JSONModel(Device);
                 oModel.setDefaultBindingMode("OneWay");
                 return oModel;
-        }
+            },
+
+            viewModel: function(sViewName) {
+                let oDefault = {};
+
+                switch (sViewName) {
+                    case "main":
+                        oDefault    = {
+                            date: new Date(),
+                            leadCount: 0
+                        };
+
+                        break;
+                
+                    default:
+                        break;
+                }
+
+                return new JSONModel(oDefault);    
+            }
+
     };
 });

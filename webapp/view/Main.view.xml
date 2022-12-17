@@ -1,7 +1,135 @@
 <mvc:View controllerName="zcrmleadslist.controller.Main"
     xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
-    xmlns="sap.m">
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout">
     <Page id="page" title="{i18n>title}">
-        <content />
+        <l:Grid containerQuery="true" class="sapUiSmallMarginTop">
+            <GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{i18n>NEW_LEAD}"
+                    frameType = "Auto" press="onPress" headerImage="sap-icon://kpi-managing-my-area">
+                <TileContent>
+                    <NumericContent value="1.96" valueColor="Error" withMargin="true" />
+                </TileContent>
+            </GenericTile>
+
+            <GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{i18n>HIGH_RANKING_LEAD}"
+                    frameType = "Auto" press="onPress" headerImage="sap-icon://unfavorite">
+                <TileContent>
+                    <NumericContent scale="M" value="1.96" valueColor="Error" indicator="Up" withMargin="true" />
+                </TileContent>
+            </GenericTile>
+
+            <GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{i18n>LATE_TASKS}"
+                    frameType = "Auto" press="onPress" headerImage="sap-icon://quality-issue">
+                <TileContent>
+                    <NumericContent scale="M" value="1.96" valueColor="Error" indicator="Up" withMargin="true" />
+                </TileContent>
+            </GenericTile>
+
+            <GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{i18n>MEETING_TODAY}"
+                    frameType = "Auto" press="onPress" headerImage="sap-icon://date-time">
+                <TileContent>
+                    <NumericContent scale="M" value="1.96" valueColor="Error" indicator="Up" withMargin="true" />
+                </TileContent>
+            </GenericTile>
+        </l:Grid>
+        <SegmentedButton selectedKey="ALL" width="97%" class="sapUiSmallMargin">
+            <items>
+                <SegmentedButtonItem text="{i18n>LEADS_ALL}"        key="ALL" />
+                <SegmentedButtonItem text="{i18n>LEADS_PROCESSING}" key="PROCESS"/>
+                <SegmentedButtonItem text="{i18n>LEADS_IRREGULAR}"  key="IRREGULAR"/>
+                <SegmentedButtonItem text="{i18n>LEADS_OPEN}"       key="OPEN"/>
+            </items>
+        </SegmentedButton>
+
+        <HBox justifyContent="SpaceBetween" class="sapUiSmallMargin">
+            <ComboBox placeholder="{i18n>STATUS}" class="selectRadius"
+            	items="{
+					path: '/LeadStatusSet',
+					sorter: { path: 'StatusDesc' }
+				}">
+				<core:Item key="{Status}" text="{StatusDesc}" />
+			</ComboBox>
+            <ComboBox placeholder="{i18n>RANK}" class="selectRadius"	
+                items="{
+					path: '/ImportanceSet',
+					sorter: { path: 'Description' }
+				}">
+				<core:Item key="{Importance_val}" text="{Description}" />
+			</ComboBox>
+            <ComboBox placeholder="{i18n>CAMPAIGN}" class="selectRadius">
+			</ComboBox>
+            <ComboBox placeholder="{i18n>BRAND}" class="selectRadius"	items="{
+					path: '/BrandSet',
+					sorter: { path: 'Brand_description' }
+				}">
+				<core:Item key="{Brand}" text="{Brand_description}" />
+			</ComboBox>
+            <ComboBox placeholder="{i18n>SLA}" class="selectRadius">
+			</ComboBox>
+            <DatePicker
+                id="DP1"
+                placeholder="Enter Date"
+                change="handleChange"
+                class="sapUiSmallMarginBottom"/>            
+        </HBox>
+
+        <Table 
+            id="mainLead-table"
+            headerText="{i18n>TABLE_TITLE} ({mainView>/leadCount})"
+            inset="false"
+            updateFinished="mainLeadUpdateFinished"
+            items="{
+                path: '/MainLeadSet',
+                sorter: {
+                    path: 'StartDate'
+                }
+            }">
+            <columns>
+                <Column><Text text="{i18n>CUSTOMER}"        class="textBold"/></Column>
+                <Column><Text text="{i18n>LEAD_NUMBER}"     class="textBold"/></Column>
+                <Column><Text text="{i18n>CREATION_DATE}"   class="textBold"/></Column>
+                <Column><Text text="{i18n>BRAND}"           class="textBold"/></Column>
+                <Column><Text text="{i18n>OPEN_DATE}"       class="textBold"/></Column>
+                <Column><Text text="{i18n>CAMPAIGN}"        class="textBold"/></Column>
+                <Column><Text text="{i18n>SLA}"             class="textBold"/></Column>
+                <Column><Text text="{i18n>PERSON_RESPONSIBLE}" class="textBold"/></Column>
+                <Column><Text text="{i18n>RANK}"            class="textBold"/></Column>
+                <Column><Text text="{i18n>STATUS}"          class="textBold"/></Column>
+                <Column><Text text="{i18n>STATUS_REASON}"   class="textBold"/></Column>
+                <Column><Text text="{i18n>FU_DATE}"         class="textBold"/></Column>
+            </columns>
+            <items>
+                <ColumnListItem vAlign="Middle">
+                    <cells>
+                        <ObjectIdentifier
+                            title="{ProspectName}"
+                            text="{ProspectNumber}"/>
+                        <Link
+                            text="{ObjectId}" />
+                        <Text text="{path:'StartDate', 
+                            type:'sap.ui.model.type.Date', 
+                            formatOptions : { style:'medium', UTC: true}}"/>
+                        <ObjectIdentifier
+                            title="{BrandDescription}"
+                            text="{Brand}"/>
+                        <Text text="{path:'StartDate', 
+                            type:'sap.ui.model.type.Date', 
+                            formatOptions : { style:'medium', UTC: true}}"/>
+                        <ObjectIdentifier
+                            title="{CampaignDescription}"
+                            text="{CampaignId}"/>
+                        <Text text="SLA"/>
+                        <Text text="{PartnerRespName}"/>
+                        <Text text="Rank"/>
+                        <Text text="{StatusDesc}"/>
+                        <Text text="{StatusReasonText}"/>
+                        <Text text="{path:'StartDate', 
+                            type:'sap.ui.model.type.Date', 
+                            formatOptions : { style:'medium', UTC: true}}"/>
+                    </cells>
+                </ColumnListItem>
+            </items>
+        </Table>
     </Page>
 </mvc:View>

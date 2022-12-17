@@ -1,1 +1,14 @@
 /* Enter your custom styles here */
+
+.tileSize.sapMGT.OneByOne {
+    width: 18rem;
+}
+
+.selectRadius .sapMInputBaseContentWrapper{
+    border-radius: 2rem !important;
+    border-color: #0854a0;
+}
+
+.textBold {
+    font-weight: bold;
+}

@@ -10,6 +10,12 @@ sap.ui.define([
         return Controller.extend("zcrmleadslist.controller.Main", {
             onInit: function () {
 
+            },
+
+            mainLeadUpdateFinished: function(oEvent) {
+                this.getOwnerComponent().getModel("mainView").setProperty("/leadCount",
+                    oEvent.getParameter("total")
+                );
             }
         });
     });
