@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="ZCRM_SALES_SRV" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="MainLead" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Guid"/>
+                </Key>
+                <Property Name="BrandDescription" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="Brand" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FromDate" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Date" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="Guid" Type="Edm.Guid" Nullable="false" sap:unicode="false" sap:label="Object GUID" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="User" Type="Edm.String" MaxLength="12" sap:unicode="false" sap:label="User Name" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="ObjectId" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="ID" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="ToDate" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Date" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="ProcessType" Type="Edm.String" MaxLength="4" sap:unicode="false" sap:label="Transaction Type" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="ProcessTypeDesc" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="Description" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PostingDate" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Posting Date" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="Status" Type="Edm.String" MaxLength="5" sap:unicode="false" sap:label="User status" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="StatusDesc" Type="Edm.String" MaxLength="30" sap:unicode="false" sap:label="Status" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="Priority" Type="Edm.String" MaxLength="1" sap:unicode="false" sap:label="Priority" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PriorityTxt" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="Description" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ProspectNumber" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="BusinessPartner" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ProspectNameFirst" Type="Edm.String" MaxLength="80" sap:unicode="false" sap:label="Full Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ProspectNameLast" Type="Edm.String" MaxLength="80" sap:unicode="false" sap:label="Full Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ProspectName" Type="Edm.String" MaxLength="80" sap:unicode="false" sap:label="Full Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="StartDate" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Start Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="EndDate" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="End Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CampaignId" Type="Edm.String" MaxLength="24" sap:unicode="false" sap:label="Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CampaignDescription" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="Description" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="StatusReason" Type="Edm.String" MaxLength="4" sap:unicode="false" sap:label="Code" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="StatusReasonText" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="Short Text Code" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PartnerRespNum" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="BusinessPartner" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PartnerRespName" Type="Edm.String" MaxLength="80" sap:unicode="false" sap:label="Full Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="OutlookId" Type="Edm.String" MaxLength="200" sap:unicode="false" sap:label="Outlook ID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Brand" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="Brand" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="StatusReasonConcKey" Type="Edm.String" MaxLength="20" sap:unicode="false" sap:label="Reason" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Fuzzysearch" Type="Edm.String" sap:unicode="false" sap:label="String Value" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Message" Type="Edm.String" sap:unicode="false" sap:label="String Value" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="UserBPData" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Username"/>
+                </Key>
+                <Property Name="Partner" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="BusinessPartner" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PartnerGuid" Type="Edm.Guid" sap:unicode="false" sap:label="BP GUID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="NameFirst" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="First Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="NameLast" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="Last Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Username" Type="Edm.String" Nullable="false" MaxLength="12" sap:unicode="false" sap:label="User Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="LeadStatus" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ProcessType"/>
+                    <PropertyRef Name="Status"/>
+                </Key>
+                <Property Name="ProcessType" Type="Edm.String" Nullable="false" MaxLength="4" sap:unicode="false" sap:label="Transaction Type" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Status" Type="Edm.String" Nullable="false" MaxLength="5" sap:unicode="false" sap:label="Status" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="StatusDesc" Type="Edm.String" MaxLength="30" sap:unicode="false" sap:label="Status" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Guid" Type="Edm.Guid" sap:unicode="false" sap:label="Object GUID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="Importance" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Importance_val"/>
+                </Key>
+                <Property Name="Importance_val" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Priority" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Description" Type="Edm.String" MaxLength="40" sap:unicode="false" sap:label="Description" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="Brand" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Brand_code"/>
+                </Key>
+                <Property Name="Brand_code" Type="Edm.String" Nullable="false" sap:unicode="false" sap:label="XML Data" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Brand_description" Type="Edm.String" sap:unicode="false" sap:label="XML Data" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityContainer Name="ZCRM_SALES_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="MainLeadSet" EntityType="ZCRM_SALES_SRV.MainLead" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="UserBPDataSet" EntityType="ZCRM_SALES_SRV.UserBPData" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="LeadStatusSet" EntityType="ZCRM_SALES_SRV.LeadStatus" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="ImportanceSet" EntityType="ZCRM_SALES_SRV.Importance" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="BrandSet" EntityType="ZCRM_SALES_SRV.Brand" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+            </EntityContainer>
+            <atom:link rel="self" href="https://sapdev.mct.co.il:50201/sap/opu/odata/sap/ZCRM_SALES_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="https://sapdev.mct.co.il:50201/sap/opu/odata/sap/ZCRM_SALES_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>
