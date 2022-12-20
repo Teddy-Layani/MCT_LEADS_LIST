@@ -2,7 +2,8 @@
     xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
-    xmlns:l="sap.ui.layout">
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.f">
     <Page id="page" title="{i18n>title}">
         <l:Grid containerQuery="true" class="sapUiSmallMarginTop">
             <GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{i18n>NEW_LEAD}"
@@ -55,15 +56,20 @@
 					path: '/ImportanceSet',
 					sorter: { path: 'Description' }
 				}">
-				<core:Item key="{Importance_val}" text="{Description}" />
+				<core:Item key="{Importance_val}" text="{Importance_val} - {Description}" />
 			</ComboBox>
-            <ComboBox placeholder="{i18n>CAMPAIGN}" class="selectRadius">
+            <ComboBox placeholder="{i18n>CAMPAIGN}" class="selectRadius"
+                items="{
+					path: '/CampaignSet',
+					sorter: { path: 'Description' }
+				}">
+				<core:Item key="{Campaign_id}" text="{Description}" />
 			</ComboBox>
             <ComboBox placeholder="{i18n>BRAND}" class="selectRadius"	items="{
 					path: '/BrandSet',
-					sorter: { path: 'Brand_description' }
+					sorter: { path: 'Description' }
 				}">
-				<core:Item key="{Brand}" text="{Brand_description}" />
+				<core:Item key="{Brand}" text="{Description}" />
 			</ComboBox>
             <ComboBox placeholder="{i18n>SLA}" class="selectRadius">
 			</ComboBox>
@@ -106,13 +112,13 @@
                             title="{ProspectName}"
                             text="{ProspectNumber}"/>
                         <Link
-                            text="{ObjectId}" />
+                            text="{ObjectId}"
+                            target="_blank"
+                            href="{Url}" />
                         <Text text="{path:'StartDate', 
                             type:'sap.ui.model.type.Date', 
                             formatOptions : { style:'medium', UTC: true}}"/>
-                        <ObjectIdentifier
-                            title="{BrandDescription}"
-                            text="{Brand}"/>
+                        <f:Avatar src="/img/{Brand}.svg" displaySize="M" displayShape="Square" imageFitType="Contain"></f:Avatar>
                         <Text text="{path:'StartDate', 
                             type:'sap.ui.model.type.Date', 
                             formatOptions : { style:'medium', UTC: true}}"/>
@@ -121,12 +127,12 @@
                             text="{CampaignId}"/>
                         <Text text="SLA"/>
                         <Text text="{PartnerRespName}"/>
-                        <Text text="Rank"/>
+                        <Text text="{Priority} - {PriorityTxt}"/>
                         <Text text="{StatusDesc}"/>
                         <Text text="{StatusReasonText}"/>
                         <Text text="{path:'StartDate', 
                             type:'sap.ui.model.type.Date', 
-                            formatOptions : { style:'medium', UTC: true}}"/>
+                            formatOptions : { pattern:'dd.MM.yyyy hh:MM:ss'}}"/>
                     </cells>
                 </ColumnListItem>
             </items>
