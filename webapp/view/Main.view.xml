@@ -9,7 +9,7 @@
             <GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{i18n>NEW_LEAD}"
                     frameType = "Auto" press="onPress" headerImage="sap-icon://kpi-managing-my-area">
                 <TileContent>
-                    <NumericContent value="1.96" valueColor="Error" withMargin="true" />
+                    <NumericContent value="1.3" valueColor="Error" withMargin="true" />
                 </TileContent>
             </GenericTile>
 
@@ -47,7 +47,8 @@
             <ComboBox placeholder="{i18n>STATUS}" class="selectRadius"
             	items="{
 					path: '/LeadStatusSet',
-					sorter: { path: 'StatusDesc' }
+					sorter: { path: 'StatusDesc' },
+                    filters:[{path : 'ProcessType',operator : 'EQ',value1 : 'ZMLE'}]
 				}">
 				<core:Item key="{Status}" text="{StatusDesc}" />
 			</ComboBox>
