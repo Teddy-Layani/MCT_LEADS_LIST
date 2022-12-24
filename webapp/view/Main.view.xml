@@ -5,8 +5,18 @@
     xmlns:l="sap.ui.layout"
     xmlns:f="sap.f">
     <Page id="page" title="{i18n>title}">
-        <l:Grid containerQuery="true" class="sapUiSmallMarginTop">
-            <GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{i18n>NEW_LEAD}"
+        <!-- <l:Grid containerQuery="true" class="sapUiSmallMarginTop"> -->
+            <HBox justifyContent="SpaceAround"
+                items="{ path: '/ElementTypeCountSet',
+                         filters: [{path : 'ElementType',operator : 'EQ',value1 : 'TILE'}]}">
+                <GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{UiText}"
+                        frameType = "Auto" press="onPress" headerImage="sap-icon://kpi-managing-my-area">
+                    <TileContent>
+                        <NumericContent value="{LeadCount}" withMargin="true" />
+                    </TileContent>
+                </GenericTile>
+            </HBox>
+            <!-- <GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{i18n>NEW_LEAD}"
                     frameType = "Auto" press="onPress" headerImage="sap-icon://kpi-managing-my-area">
                 <TileContent>
                     <NumericContent value="1.3" valueColor="Error" withMargin="true" />
@@ -32,14 +42,18 @@
                 <TileContent>
                     <NumericContent scale="M" value="1.96" valueColor="Error" indicator="Up" withMargin="true" />
                 </TileContent>
-            </GenericTile>
-        </l:Grid>
-        <SegmentedButton selectedKey="ALL" width="97%" class="sapUiSmallMargin">
+            </GenericTile> -->
+        <!-- </l:Grid> -->
+        <SegmentedButton selectedKey="4" width="97%" class="sapUiSmallMargin" 
+            selectionChange="onSelectedButtonChange"
+            items="{ path: '/ElementTypeCountSet',
+                     parameters:{expand : 'TabConditionSet'},
+                     filters: [{path : 'ElementType',operator : 'EQ',value1 : 'TAB'}]}">
             <items>
-                <SegmentedButtonItem text="{i18n>LEADS_ALL}"        key="ALL" />
-                <SegmentedButtonItem text="{i18n>LEADS_PROCESSING}" key="PROCESS"/>
+                <SegmentedButtonItem text="{UiText}({LeadCount})" key="{SortOrder}" />
+                <!-- <SegmentedButtonItem text="{i18n>LEADS_PROCESSING}" key="PROCESS"/>
                 <SegmentedButtonItem text="{i18n>LEADS_IRREGULAR}"  key="IRREGULAR"/>
-                <SegmentedButtonItem text="{i18n>LEADS_OPEN}"       key="OPEN"/>
+                <SegmentedButtonItem text="{i18n>LEADS_OPEN}"       key="OPEN"/> -->
             </items>
         </SegmentedButton>
 
@@ -119,7 +133,7 @@
                         <Text text="{path:'StartDate', 
                             type:'sap.ui.model.type.Date', 
                             formatOptions : { style:'medium', UTC: true}}"/>
-                        <f:Avatar src="/img/{Brand}.svg" displaySize="M" displayShape="Square" imageFitType="Contain"></f:Avatar>
+                        <f:Avatar src="/img/{Brand}.jpg" displaySize="M" displayShape="Square" imageFitType="Contain"></f:Avatar>
                         <Text text="{path:'StartDate', 
                             type:'sap.ui.model.type.Date', 
                             formatOptions : { style:'medium', UTC: true}}"/>
