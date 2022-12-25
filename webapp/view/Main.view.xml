@@ -63,35 +63,35 @@
 					path: '/LeadStatusSet',
 					sorter: { path: 'StatusDesc' },
                     filters:[{path : 'ProcessType',operator : 'EQ',value1 : 'ZMLE'}]
-				}">
+				}" selectionChange="onComboChange">
 				<core:Item key="{Status}" text="{StatusDesc}" />
 			</ComboBox>
             <ComboBox placeholder="{i18n>RANK}" class="selectRadius"	
                 items="{
 					path: '/ImportanceSet',
 					sorter: { path: 'Description' }
-				}">
+				}" selectionChange="onComboChange">
 				<core:Item key="{Importance_val}" text="{Importance_val} - {Description}" />
 			</ComboBox>
             <ComboBox placeholder="{i18n>CAMPAIGN}" class="selectRadius"
                 items="{
 					path: '/CampaignSet',
 					sorter: { path: 'Description' }
-				}">
+				}" selectionChange="onComboChange" >
 				<core:Item key="{Campaign_id}" text="{Description}" />
 			</ComboBox>
             <ComboBox placeholder="{i18n>BRAND}" class="selectRadius"	items="{
 					path: '/BrandSet',
 					sorter: { path: 'Description' }
-				}">
+				}" selectionChange="onComboChange" >
 				<core:Item key="{Brand}" text="{Description}" />
 			</ComboBox>
-            <ComboBox placeholder="{i18n>SLA}" class="selectRadius">
-			</ComboBox>
+            <!-- <ComboBox placeholder="{i18n>SLA}" class="selectRadius">
+			</ComboBox> -->
             <DatePicker
-                id="DP1"
-                placeholder="Enter Date"
-                change="handleChange"
+                placeholder="{i18n>ENTER_DATE}"
+                change="onDateChange"
+                dateValue="{mainView>/date}"
                 class="sapUiSmallMarginBottom"/>            
         </HBox>
 
@@ -113,7 +113,7 @@
                 <Column><Text text="{i18n>BRAND}"           class="textBold"/></Column>
                 <Column><Text text="{i18n>OPEN_DATE}"       class="textBold"/></Column>
                 <Column><Text text="{i18n>CAMPAIGN}"        class="textBold"/></Column>
-                <Column><Text text="{i18n>SLA}"             class="textBold"/></Column>
+                <!-- <Column><Text text="{i18n>SLA}"             class="textBold"/></Column> -->
                 <Column><Text text="{i18n>PERSON_RESPONSIBLE}" class="textBold"/></Column>
                 <Column><Text text="{i18n>RANK}"            class="textBold"/></Column>
                 <Column><Text text="{i18n>STATUS}"          class="textBold"/></Column>
@@ -140,7 +140,7 @@
                         <ObjectIdentifier
                             title="{CampaignDescription}"
                             text="{CampaignId}"/>
-                        <Text text="SLA"/>
+                        <!-- <Text text="SLA"/> -->
                         <Text text="{PartnerRespName}"/>
                         <Text text="{Priority} - {PriorityTxt}"/>
                         <Text text="{StatusDesc}"/>

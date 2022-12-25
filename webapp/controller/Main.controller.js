@@ -31,7 +31,16 @@ sap.ui.define([
                     aFilters.push( new Filter( "/" + oTabCondition.FieldName, oTabCondition.Operator, oTabCondition.ValueLow));
                 }
 
-                oTableBinding.filter(aFilters);
+                oTableBinding.filter(aFilters, "Application");
+            },
+
+            onComboChange: function(oEvent) {
+                let oSelection  = oEvent.getParameter("selectedItem").getBindingContext().getObject(),
+                    sKeys       = Object.keys(oSelection)[1],
+                    sValue      = oSelection[sKeys],
+                    oTableBinding   = this.getView().byId("mainLead-table").getBinding("items");
+
+                oTableBinding.filter([new Filter( "/" + sKeys, "EQ", sValue)], "Application");
             }
 
         });
