@@ -133,7 +133,7 @@
                         <Text text="{path:'StartDate', 
                             type:'sap.ui.model.type.Date', 
                             formatOptions : { style:'medium', UTC: true}}"/>
-                        <f:Avatar src="/img/{Brand}.jpg" displaySize="M" displayShape="Square" imageFitType="Contain"></f:Avatar>
+                        <f:Avatar src="/css/img/{Brand}.jpg" displaySize="M" displayShape="Square" imageFitType="Contain"></f:Avatar>
                         <Text text="{path:'StartDate', 
                             type:'sap.ui.model.type.Date', 
                             formatOptions : { style:'medium', UTC: true}}"/>
