@@ -27,7 +27,8 @@ sap.ui.define([
                     case "main":
                         oDefault    = {
                             date: new Date(),
-                            leadCount: 0
+                            leadCount: 0,
+                            selectedSegmentButton: "4"
                         };
 
                         break;

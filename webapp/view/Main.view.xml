@@ -44,7 +44,7 @@
                 </TileContent>
             </GenericTile> -->
         <!-- </l:Grid> -->
-        <SegmentedButton selectedKey="4" width="97%" class="sapUiSmallMargin" 
+        <SegmentedButton selectedKey="{mainView>/selectedSegmentButton}" width="97%" class="sapUiSmallMargin" 
             selectionChange="onSelectedButtonChange"
             items="{ path: '/ElementTypeCountSet',
                      parameters:{expand : 'TabConditionSet'},
@@ -57,42 +57,42 @@
             </items>
         </SegmentedButton>
 
-        <HBox justifyContent="SpaceBetween" class="sapUiSmallMargin">
-            <ComboBox placeholder="{i18n>STATUS}" class="selectRadius"
+        <HBox id="filters-id" justifyContent="SpaceBetween" class="sapUiSmallMargin">
+            <ComboBox placeholder="{i18n>STATUS}" class="selectRadius" selectedKey="{mainView>/selectedStatus}"
             	items="{
-					path: '/LeadStatusSet',
-					sorter: { path: 'StatusDesc' },
-                    filters:[{path : 'ProcessType',operator : 'EQ',value1 : 'ZMLE'}]
+					path: '/ZALL_LEADS_STATUSSet',
+					sorter: { path: 'Txt30' }
 				}" selectionChange="onComboChange">
-				<core:Item key="{Status}" text="{StatusDesc}" />
+				<core:Item key="{Estat}" text="{Txt30}" />
 			</ComboBox>
-            <ComboBox placeholder="{i18n>RANK}" class="selectRadius"	
+            <ComboBox placeholder="{i18n>RANK}" class="selectRadius" selectedKey="{mainView>/selectedPriority}"
                 items="{
 					path: '/ImportanceSet',
 					sorter: { path: 'Description' }
 				}" selectionChange="onComboChange">
-				<core:Item key="{Importance_val}" text="{Importance_val} - {Description}" />
+				<core:Item key="{Importance_val}" text="{Description}" />
 			</ComboBox>
-            <ComboBox placeholder="{i18n>CAMPAIGN}" class="selectRadius"
+            <ComboBox placeholder="{i18n>CAMPAIGN}" class="selectRadius" selectedKey="{mainView>/selectedCampaign}"
                 items="{
 					path: '/CampaignSet',
 					sorter: { path: 'Description' }
 				}" selectionChange="onComboChange" >
 				<core:Item key="{Campaign_id}" text="{Description}" />
 			</ComboBox>
-            <ComboBox placeholder="{i18n>BRAND}" class="selectRadius"	items="{
+            <ComboBox placeholder="{i18n>BRAND}" class="selectRadius" selectedKey="{mainView>/selectedBrand}"
+                items="{
 					path: '/BrandSet',
 					sorter: { path: 'Description' }
 				}" selectionChange="onComboChange" >
-				<core:Item key="{Brand}" text="{Description}" />
+				<core:Item key="{Brand_code}" text="{Description}" />
 			</ComboBox>
-            <!-- <ComboBox placeholder="{i18n>SLA}" class="selectRadius">
-			</ComboBox> -->
-            <DatePicker
+            <Button icon="sap-icon://reset"
+                press="onFilterReset"/>      
+            <DateTimePicker
                 placeholder="{i18n>ENTER_DATE}"
                 change="onDateChange"
                 dateValue="{mainView>/date}"
-                class="sapUiSmallMarginBottom"/>            
+                class="sapUiSmallMarginBottom"/>
         </HBox>
 
         <Table 
@@ -142,7 +142,7 @@
                             text="{CampaignId}"/>
                         <!-- <Text text="SLA"/> -->
                         <Text text="{PartnerRespName}"/>
-                        <Text text="{Priority} - {PriorityTxt}"/>
+                        <Text text="{PriorityTxt}"/>
                         <Text text="{StatusDesc}"/>
                         <Text text="{StatusReasonText}"/>
                         <Text text="{path:'StartDate', 
