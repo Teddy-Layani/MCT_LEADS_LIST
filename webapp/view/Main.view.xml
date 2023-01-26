@@ -3,7 +3,8 @@
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
     xmlns:l="sap.ui.layout"
-    xmlns:f="sap.f">
+    xmlns:f="sap.f"
+    busy="{mainView>/busy}">
     <Page id="page" title="{i18n>title}">
         <!-- <l:Grid containerQuery="true" class="sapUiSmallMarginTop"> -->
             <HBox justifyContent="SpaceAround"
@@ -12,7 +13,7 @@
                 <GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{UiText}"
                         frameType = "Auto" press="onPress" headerImage="sap-icon://kpi-managing-my-area">
                     <TileContent>
-                        <NumericContent value="{LeadCount}" withMargin="true" />
+                        <NumericContent value="{LeadCount}" withMargin="true" valueColor="{= ${Color} === 'Green' ? 'Good' : ${Color} === 'Red' ? 'Error' : 'Neutral' }"/>
                     </TileContent>
                 </GenericTile>
             </HBox>
@@ -51,46 +52,40 @@
                      filters: [{path : 'ElementType',operator : 'EQ',value1 : 'TAB'}]}">
             <items>
                 <SegmentedButtonItem text="{UiText}({LeadCount})" key="{SortOrder}" />
-                <!-- <SegmentedButtonItem text="{i18n>LEADS_PROCESSING}" key="PROCESS"/>
-                <SegmentedButtonItem text="{i18n>LEADS_IRREGULAR}"  key="IRREGULAR"/>
-                <SegmentedButtonItem text="{i18n>LEADS_OPEN}"       key="OPEN"/> -->
             </items>
         </SegmentedButton>
 
         <HBox id="filters-id" justifyContent="SpaceBetween" class="sapUiSmallMargin">
             <ComboBox placeholder="{i18n>STATUS}" class="selectRadius" selectedKey="{mainView>/selectedStatus}"
-            	items="{
-					path: '/ZALL_LEADS_STATUSSet',
-					sorter: { path: 'Txt30' }
-				}" selectionChange="onComboChange">
-				<core:Item key="{Estat}" text="{Txt30}" />
+            	items="{mainView>/statusValues}" selectionChange="onFilterChange">
+				<core:Item key="{mainView>key}" text="{mainView>text}" />
 			</ComboBox>
             <ComboBox placeholder="{i18n>RANK}" class="selectRadius" selectedKey="{mainView>/selectedPriority}"
                 items="{
 					path: '/ImportanceSet',
 					sorter: { path: 'Description' }
-				}" selectionChange="onComboChange">
+				}" selectionChange="onFilterChange">
 				<core:Item key="{Importance_val}" text="{Description}" />
 			</ComboBox>
             <ComboBox placeholder="{i18n>CAMPAIGN}" class="selectRadius" selectedKey="{mainView>/selectedCampaign}"
                 items="{
 					path: '/CampaignSet',
 					sorter: { path: 'Description' }
-				}" selectionChange="onComboChange" >
+				}" selectionChange="onFilterChange" >
 				<core:Item key="{Campaign_id}" text="{Description}" />
 			</ComboBox>
             <ComboBox placeholder="{i18n>BRAND}" class="selectRadius" selectedKey="{mainView>/selectedBrand}"
                 items="{
 					path: '/BrandSet',
 					sorter: { path: 'Description' }
-				}" selectionChange="onComboChange" >
+				}" selectionChange="onFilterChange" >
 				<core:Item key="{Brand_code}" text="{Description}" />
 			</ComboBox>
             <Button icon="sap-icon://reset"
                 press="onFilterReset"/>      
-            <DateTimePicker
+            <DatePicker
                 placeholder="{i18n>ENTER_DATE}"
-                change="onDateChange"
+                change="onFilterChange"
                 dateValue="{mainView>/date}"
                 class="sapUiSmallMarginBottom"/>
         </HBox>
@@ -109,11 +104,10 @@
             <columns>
                 <Column><Text text="{i18n>CUSTOMER}"        class="textBold"/></Column>
                 <Column><Text text="{i18n>LEAD_NUMBER}"     class="textBold"/></Column>
-                <Column><Text text="{i18n>CREATION_DATE}"   class="textBold"/></Column>
                 <Column><Text text="{i18n>BRAND}"           class="textBold"/></Column>
                 <Column><Text text="{i18n>OPEN_DATE}"       class="textBold"/></Column>
                 <Column><Text text="{i18n>CAMPAIGN}"        class="textBold"/></Column>
-                <!-- <Column><Text text="{i18n>SLA}"             class="textBold"/></Column> -->
+                <Column><Text text="{i18n>SLA}"             class="textBold"/></Column>
                 <Column><Text text="{i18n>PERSON_RESPONSIBLE}" class="textBold"/></Column>
                 <Column><Text text="{i18n>RANK}"            class="textBold"/></Column>
                 <Column><Text text="{i18n>STATUS}"          class="textBold"/></Column>
@@ -130,9 +124,6 @@
                             text="{ObjectId}"
                             target="_blank"
                             href="{Url}" />
-                        <Text text="{path:'StartDate', 
-                            type:'sap.ui.model.type.Date', 
-                            formatOptions : { style:'medium', UTC: true}}"/>
                         <f:Avatar src="img/{Brand}.jpg" displaySize="M" displayShape="Square" imageFitType="Contain"></f:Avatar>
                         <Text text="{path:'StartDate', 
                             type:'sap.ui.model.type.Date', 
@@ -140,12 +131,13 @@
                         <ObjectIdentifier
                             title="{CampaignDescription}"
                             text="{CampaignId}"/>
-                        <!-- <Text text="SLA"/> -->
+                        <ObjectStatus 
+                            state="Information"/>
                         <Text text="{PartnerRespName}"/>
                         <Text text="{PriorityTxt}"/>
                         <Text text="{StatusDesc}"/>
                         <Text text="{StatusReasonText}"/>
-                        <Text text="{path:'StartDate', 
+                        <Text text="{path:'ZleadCallBack', 
                             type:'sap.ui.model.type.Date', 
                             formatOptions : { pattern:'dd.MM.yyyy hh:MM:ss'}}"/>
                     </cells>

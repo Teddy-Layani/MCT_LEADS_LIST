@@ -26,6 +26,7 @@ sap.ui.define([
                 switch (sViewName) {
                     case "main":
                         oDefault    = {
+                            busy: true,
                             date: new Date(),
                             leadCount: 0,
                             selectedSegmentButton: "4"

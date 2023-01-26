@@ -1,22 +1,54 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
-    "sap/ui/model/Filter"
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator",
+    "sap/ui/core/ValueState",
+    "zcrmleadslist/utilities/moment"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Filter) {
+    function (Controller, Filter, FilterOperator, ValueState) {
         "use strict";
 
         return Controller.extend("zcrmleadslist.controller.Main", {
             onInit: function () {
+                var self = this;
+                
+                this._interval = window.setInterval(self.slaRefresh, 600000, self);
 
+                //  Set HE to momentjs
+                moment.locale('he');
             },
 
             mainLeadUpdateFinished: function(oEvent) {
+                let oStatus     = {},
+                    aStatus     = [];
+
                 this.getOwnerComponent().getModel("mainView").setProperty("/leadCount",
                     oEvent.getParameter("total")
                 );
+
+                oEvent.getSource().getItems().forEach( element => {
+                    const oLead     = element.getBindingContext().getObject();
+
+                    oStatus     = aStatus.find(function(el) {
+                        return el.key === oLead.Status;
+                    });
+
+                    if (!oStatus) {
+                        aStatus.push({
+                            key: oLead.Status,
+                            text: oLead.StatusDesc
+                        });                            
+                    }
+                });
+
+                this.getOwnerComponent().getModel("mainView").setProperty("/statusValues", aStatus);
+                this.getOwnerComponent().getModel("mainView").setProperty("/busy", false);
+
+                // Update SLA Column
+                this.slaRefresh(this);
             },
 
             onDateChange: function(oEvent) {
@@ -50,22 +82,29 @@ sap.ui.define([
                 oTableBinding.filter(aFilters, "Application");
             },
 
-            onComboChange: function(oEvent) {
+            onFilterChange: function(oEvent) {
                 let oModelView      = this.getOwnerComponent().getModel("mainView").getData(),
                     oTableBinding   = this.getView().byId("mainLead-table").getBinding("items"),
                     aFilter     = [];
 
                 if (oModelView.selectedStatus) {
-                    aFilter.push(new Filter( "Status", "EQ", oModelView.selectedStatus));                    
+                    aFilter.push(new Filter( "Status", FilterOperator.EQ, oModelView.selectedStatus));                    
                 }
                 if (oModelView.selectedCampaign) {
-                    aFilter.push(new Filter( "CampaignId", "EQ", oModelView.selectedCampaign));                    
+                    aFilter.push(new Filter( "CampaignId", FilterOperator.EQ, oModelView.selectedCampaign));                    
                 }
                 if (oModelView.selectedPriority) {
-                    aFilter.push(new Filter( "Priority", "EQ", oModelView.selectedPriority));                    
+                    aFilter.push(new Filter( "Priority", FilterOperator.EQ, oModelView.selectedPriority));                    
                 }
                 if (oModelView.selectedBrand) {
-                    aFilter.push(new Filter( "Brand", "EQ", oModelView.selectedBrand));                    
+                    aFilter.push(new Filter( "Brand", FilterOperator.EQ, oModelView.selectedBrand));                    
+                }
+                if (oModelView.date) {
+                    aFilter.push(new Filter( {
+                        path: "FromDate",
+                        operator: FilterOperator.LE,
+                        value1: oModelView.date
+                      }));                    
                 }
 
                 oTableBinding.filter(aFilter, "Application");
@@ -124,11 +163,15 @@ sap.ui.define([
                     this.getOwnerComponent().getModel("mainView").setProperty("/selectedSegmentButton", "4");                    
                 }
 
+                //  Date
+                oModelView.setProperty("/date", new Date());
+                
                 //  ComboBox Filters
                 oModelView.setProperty("/selectedStatus", "");
                 oModelView.setProperty("/selectedCampaign", "");
                 oModelView.setProperty("/selectedPriority", "");
                 oModelView.setProperty("/selectedBrand", "");
+
                 // this.getView().byId("filters-id").getItems().forEach(element => {
                 //     if (element instanceof sap.m.ComboBox) {
                 //         element.setSelectedKey("");                        
@@ -136,6 +179,35 @@ sap.ui.define([
                 // });
 
                 oTableBinding.filter([], "Application");                
+            },
+            
+            slaRefresh: function(that) {
+                var aItems  = that.getView().byId("mainLead-table").getItems();
+                
+                aItems.forEach(oItem => {
+                    var slaCell = oItem.getCells().find(oCell => oCell instanceof sap.m.ObjectStatus );
+
+                    if (slaCell) {
+                        let dZleadCallBack = oItem.getBindingContext().getObject().ZleadCallBack;
+
+                        if (dZleadCallBack) {
+                            slaCell.setText( moment(dZleadCallBack).from(new Date()) );                            
+                        }
+
+                        if (moment(dZleadCallBack).isAfter(new Date())) {
+                            slaCell.setState(ValueState.Information);
+                        }
+
+                        if (moment(dZleadCallBack).isBefore(new Date())) {
+                            slaCell.setState(ValueState.Error);
+                        }
+
+                    }
+                });
+            },
+
+            onExit: function() {
+                window.clearInterval( this._interval );
             }
 
         });
