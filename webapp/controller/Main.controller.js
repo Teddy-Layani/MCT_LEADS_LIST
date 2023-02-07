@@ -192,8 +192,8 @@ sap.ui.define([
                 //         element.setSelectedKey("");                        
                 //     }
                 // });
-                if(oTableBinding)//for init
-                    oTableBinding.filter([], "Application");
+                // if(oTableBinding)//for init // Don't touch the Binding Here !!!!
+                //     oTableBinding.filter([], "Application");
             },
             getZleadCallBack: function (oContext) {
                 return oContext.getProperty('ZleadCallBack');
