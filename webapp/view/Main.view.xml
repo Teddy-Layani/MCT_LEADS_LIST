@@ -83,24 +83,53 @@
 			</ComboBox>
             <Button icon="sap-icon://reset"
                 press="onFilterReset"/>      
-            <DatePicker
+            <DateRangeSelection
+                change="onFilterChange"
+                value= "{
+                    'type': 'sap.ui.model.type.DateInterval',
+                    'parts': [
+                        {
+                            'type': 'sap.ui.model.type.Date',
+                            'path': 'mainView>/beginDate'
+                        },
+                        {
+                            'type': 'sap.ui.model.type.Date',
+                            'path': 'mainView>/endDate'
+                        }
+                    ]
+                }"/>
+            
+            <!-- <DatePicker
                 placeholder="{i18n>ENTER_DATE}"
                 change="onFilterChange"
                 dateValue="{mainView>/date}"
-                class="sapUiSmallMarginBottom"/>
+                class="sapUiSmallMarginBottom"/> -->
         </HBox>
-
+        <HBox justifyContent="SpaceBetween" class="sapUiSmallMargin">
+        </HBox>
         <Table 
             id="mainLead-table"
-            headerText="{i18n>TABLE_TITLE} ({mainView>/leadCount})"
             inset="false"
             updateFinished="mainLeadUpdateFinished"
             items="{
-                path: '/MainLeadSet',
-                sorter: {
-                    path: 'StartDate'
-                }
+                path: '/MainLeadSet'
             }">
+            <headerToolbar>
+                <OverflowToolbar>
+                    <content>
+                        <Title text="{i18n>TABLE_TITLE} ({mainView>/leadCount})" level="H2"/>
+                        <ToolbarSpacer />
+                        <SegmentedButton 
+                            selectedKey="{mainView>/responsible}" 
+                            selectionChange="onFilterChange"  >
+                            <items>
+                                <SegmentedButtonItem text="{i18n>my}" key="my" />
+                                <SegmentedButtonItem text="{i18n>NoFilter}" key="NoFilter" />
+                            </items>
+                        </SegmentedButton>
+                    </content>
+                </OverflowToolbar>
+		    </headerToolbar>
             <columns>
                 <Column><Text text="{i18n>CUSTOMER}"        class="textBold"/></Column>
                 <Column><Text text="{i18n>LEAD_NUMBER}"     class="textBold"/></Column>
@@ -139,7 +168,7 @@
                         <Text text="{StatusReasonText}"/>
                         <Text text="{path:'ZleadCallBack', 
                             type:'sap.ui.model.type.Date', 
-                            formatOptions : { pattern:'dd.MM.yyyy hh:MM:ss'}}"/>
+                            formatOptions : { pattern:'dd.MM.yyyy HH:MM'}}"/>
                     </cells>
                 </ColumnListItem>
             </items>

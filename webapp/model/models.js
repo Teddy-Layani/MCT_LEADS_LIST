@@ -28,6 +28,8 @@ sap.ui.define([
                         oDefault    = {
                             busy: true,
                             date: new Date(),
+                            beginDate: new Date(),
+                            endDate: new Date(),
                             leadCount: 0,
                             selectedSegmentButton: "4"
                         };
