@@ -3,12 +3,13 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/core/ValueState",
+    "sap/ui/model/Sorter",
     "zcrmleadslist/utilities/moment"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Filter, FilterOperator, ValueState) {
+    function (Controller, Filter, FilterOperator, ValueState, Sorter) {
         "use strict";
 
         return Controller.extend("zcrmleadslist.controller.Main", {
@@ -22,6 +23,9 @@ sap.ui.define([
 
                 this.getOwnerComponent().getModel("mainView").setProperty("/beginDate", null);
                 this.getOwnerComponent().getModel("mainView").setProperty("/endDate",  null);
+
+                this.getOwnerComponent().getModel("mainView").setProperty("/CUSTOMER_descending",  false);
+                this.getOwnerComponent().getModel("mainView").setProperty("/CUSTOMER_ascending",  false);
             },
 
             mainLeadUpdateFinished: function (oEvent) {
@@ -88,6 +92,33 @@ sap.ui.define([
                 oTableBinding.filter(aFilters, "Application");
             },
 
+            onSort(oEvent){
+                let sortProperty = oEvent.getSource().getFieldGroupIds()[0];
+                let oTableBinding = this.getView().byId("mainLead-table").getBinding("items");
+                let sort_value = this.getOwnerComponent().getModel("mainView").getProperty("/sortProperty");
+                let that = this;
+                let descending = true;
+                
+                switch(sort_value){
+                    case 'A':
+                        that.getOwnerComponent().getModel("mainView").setProperty("/sortProperty",false);
+                        descending = false;
+                    break;
+                    case 'D':
+                        that.getOwnerComponent().getModel("mainView").setProperty("/sortProperty",'A');
+                        descending = true;
+                    break;
+                    default:
+                        that.getOwnerComponent().getModel("mainView").setProperty("/sortProperty",'D');
+                }
+                var oSorter = new Sorter({
+                    path: sortProperty, 
+                    descending: descending});
+                    
+                oTableBinding.filter(oSorter, "Application");
+            },
+            
+
             onFilterChange: function (oEvent) {
                 let oModelView = this.getOwnerComponent().getModel("mainView").getData(),
                     oTableBinding = this.getView().byId("mainLead-table").getBinding("items"),
@@ -122,7 +153,7 @@ sap.ui.define([
                 }
 
                 oTableBinding.filter(aFilter, "Application");
-        },
+            },
 
             onComboChangeOld: function (oEvent) {
                 let oSelection = oEvent.getParameter("selectedItem").getBindingContext().getObject(),
@@ -166,6 +197,7 @@ sap.ui.define([
 
             onFilterReset: function (oEvent) {
                 this.resetFilters(true);
+                this.onFilterChange();
             },
 
             resetFilters: function (bSegmentedButton) {
@@ -195,9 +227,11 @@ sap.ui.define([
                 // if(oTableBinding)//for init // Don't touch the Binding Here !!!!
                 //     oTableBinding.filter([], "Application");
             },
+
             getZleadCallBack: function (oContext) {
                 return oContext.getProperty('ZleadCallBack');
             },
+
             slaRefresh: function (that) {
                 var aItems = that.getView().byId("mainLead-table").getItems();
 
@@ -243,6 +277,36 @@ sap.ui.define([
 
                     }
                 });
+            },
+
+            onColumnHeader: function(oEvent) {
+                let oTableBinding = this.getView().byId("mainLead-table").getBinding("items"),
+                    oSource         = oEvent.getSource(),
+                    sortProperty    = oSource.data().sortProperty,
+                    oSort           = null;
+
+
+                switch (oSource.getIcon()) {
+                    case "sap-icon://sorting-ranking":
+                        oSort       = new Sorter( sortProperty, false );
+
+                        oSource.setIcon("sap-icon://sort-ascending");
+                        break;
+                    case "sap-icon://sort-ascending":
+                        oSort       = new Sorter( sortProperty, true );
+                        
+                        oSource.setIcon("sap-icon://sort-descending");
+                        break;
+                    case "sap-icon://sort-descending":
+                        oSource.setIcon("sap-icon://sorting-ranking");
+                    
+                        break;
+                
+                    default:
+                        break;
+                }
+                
+                oTableBinding.sort(oSort);
             },
 
             onExit: function () {

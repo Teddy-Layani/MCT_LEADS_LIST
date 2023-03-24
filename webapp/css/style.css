@@ -12,3 +12,9 @@
 .textBold {
     font-weight: bold;
 }
+
+.columnHeaderButton .sapMBtnText {
+    text-align: start;    
+    padding-left: 0px;
+    padding-right: 0px;
+} 

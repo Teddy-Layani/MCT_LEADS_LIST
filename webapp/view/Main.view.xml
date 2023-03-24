@@ -1,23 +1,23 @@
-<mvc:View controllerName="zcrmleadslist.controller.Main"
-    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
-    xmlns="sap.m"
-    xmlns:core="sap.ui.core"
-    xmlns:l="sap.ui.layout"
-    xmlns:f="sap.f"
+<mvc:View controllerName="zcrmleadslist.controller.Main" 
+    xmlns:mvc="sap.ui.core.mvc" 
+    xmlns="sap.m" 
+    xmlns:core="sap.ui.core" 
+    xmlns:l="sap.ui.layout" 
+    xmlns:f="sap.f" 
+    xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+    displayBlock="true" 
     busy="{mainView>/busy}">
     <Page id="page" title="{i18n>title}">
         <!-- <l:Grid containerQuery="true" class="sapUiSmallMarginTop"> -->
-            <HBox justifyContent="SpaceAround"
-                items="{ path: '/ElementTypeCountSet',
+        <HBox justifyContent="SpaceAround" items="{ path: '/ElementTypeCountSet',
                          filters: [{path : 'ElementType',operator : 'EQ',value1 : 'TILE'}]}">
-                <GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{UiText}"
-                        frameType = "Auto" press="onPress" headerImage="sap-icon://kpi-managing-my-area">
-                    <TileContent>
-                        <NumericContent value="{LeadCount}" withMargin="true" valueColor="{= ${Color} === 'Green' ? 'Good' : ${Color} === 'Red' ? 'Error' : 'Neutral' }"/>
-                    </TileContent>
-                </GenericTile>
-            </HBox>
-            <!-- <GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{i18n>NEW_LEAD}"
+            <GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{UiText}" frameType="Auto" press="onPress" headerImage="sap-icon://kpi-managing-my-area">
+                <TileContent>
+                    <NumericContent value="{LeadCount}" withMargin="true" valueColor="{= ${Color} === 'Green' ? 'Good' : ${Color} === 'Red' ? 'Error' : 'Neutral' }" />
+                </TileContent>
+            </GenericTile>
+        </HBox>
+        <!-- <GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{i18n>NEW_LEAD}"
                     frameType = "Auto" press="onPress" headerImage="sap-icon://kpi-managing-my-area">
                 <TileContent>
                     <NumericContent value="1.3" valueColor="Error" withMargin="true" />
@@ -45,47 +45,52 @@
                 </TileContent>
             </GenericTile> -->
         <!-- </l:Grid> -->
-        <SegmentedButton selectedKey="{mainView>/selectedSegmentButton}" width="97%" class="sapUiSmallMargin" 
+        <SegmentedButton
+            selectedKey="{mainView>/selectedSegmentButton}"
+            width="97%"
+            class="sapUiSmallMargin"
             selectionChange="onSelectedButtonChange"
             items="{ path: '/ElementTypeCountSet',
                      parameters:{expand : 'TabConditionSet'},
-                     filters: [{path : 'ElementType',operator : 'EQ',value1 : 'TAB'}]}">
+                     filters: [{path : 'ElementType',operator : 'EQ',value1 : 'TAB'}]}"
+        >
             <items>
                 <SegmentedButtonItem text="{UiText}({LeadCount})" key="{SortOrder}" />
             </items>
         </SegmentedButton>
 
         <HBox id="filters-id" justifyContent="SpaceBetween" class="sapUiSmallMargin">
-            <ComboBox placeholder="{i18n>STATUS}" class="selectRadius" selectedKey="{mainView>/selectedStatus}"
-            	items="{mainView>/statusValues}" selectionChange="onFilterChange">
-				<core:Item key="{mainView>key}" text="{mainView>text}" />
-			</ComboBox>
-            <ComboBox placeholder="{i18n>RANK}" class="selectRadius" selectedKey="{mainView>/selectedPriority}"
-                items="{
+            <ComboBox placeholder="{i18n>STATUS}" class="selectRadius" selectedKey="{mainView>/selectedStatus}" items="{mainView>/statusValues}" selectionChange="onFilterChange">
+                <core:Item key="{mainView>key}" text="{mainView>text}" />
+            </ComboBox>
+            <ComboBox placeholder="{i18n>RANK}" class="selectRadius" selectedKey="{mainView>/selectedPriority}" items="{
 					path: '/ImportanceSet',
 					sorter: { path: 'Description' }
 				}" selectionChange="onFilterChange">
-				<core:Item key="{Importance_val}" text="{Description}" />
-			</ComboBox>
-            <ComboBox placeholder="{i18n>CAMPAIGN}" class="selectRadius" selectedKey="{mainView>/selectedCampaign}"
-                items="{
+                <core:Item key="{Importance_val}" text="{Description}" />
+            </ComboBox>
+            <!-- <Input
+				class="sapUiSmallMarginBottom"
+				type="Text"
+				placeholder="{i18n>CAMPAIGN}"
+				showValueHelp="true"
+				valueHelpRequest="handleValueHelpCampaign"/> -->
+            <ComboBox placeholder="{i18n>CAMPAIGN}" class="selectRadius" selectedKey="{mainView>/selectedCampaign}" items="{
 					path: '/CampaignSet',
 					sorter: { path: 'Description' }
-				}" selectionChange="onFilterChange" >
-				<core:Item key="{Campaign_id}" text="{Description}" />
-			</ComboBox>
-            <ComboBox placeholder="{i18n>BRAND}" class="selectRadius" selectedKey="{mainView>/selectedBrand}"
-                items="{
+				}" selectionChange="onFilterChange">
+                <core:Item key="{Campaign_id}" text="{Description}" />
+            </ComboBox>
+            <ComboBox placeholder="{i18n>BRAND}" class="selectRadius" selectedKey="{mainView>/selectedBrand}" items="{
 					path: '/BrandSet',
 					sorter: { path: 'Description' }
-				}" selectionChange="onFilterChange" >
-				<core:Item key="{Brand_code}" text="{Description}" />
-			</ComboBox>
-            <Button icon="sap-icon://reset"
-                press="onFilterReset"/>      
+				}" selectionChange="onFilterChange">
+                <core:Item key="{Brand_code}" text="{Description}" />
+            </ComboBox>
+            <Button icon="sap-icon://reset" press="onFilterReset" />
             <DateRangeSelection
                 change="onFilterChange"
-                value= "{
+                value="{
                     'type': 'sap.ui.model.type.DateInterval',
                     'parts': [
                         {
@@ -97,31 +102,25 @@
                             'path': 'mainView>/endDate'
                         }
                     ]
-                }"/>
-            
+                }"
+            />
+
             <!-- <DatePicker
                 placeholder="{i18n>ENTER_DATE}"
                 change="onFilterChange"
                 dateValue="{mainView>/date}"
                 class="sapUiSmallMarginBottom"/> -->
         </HBox>
-        <HBox justifyContent="SpaceBetween" class="sapUiSmallMargin">
-        </HBox>
-        <Table 
-            id="mainLead-table"
-            inset="false"
-            updateFinished="mainLeadUpdateFinished"
-            items="{
+        <HBox justifyContent="SpaceBetween" class="sapUiSmallMargin" />
+        <Table id="mainLead-table" inset="false" updateFinished="mainLeadUpdateFinished" items="{
                 path: '/MainLeadSet'
             }">
             <headerToolbar>
                 <OverflowToolbar>
                     <content>
-                        <Title text="{i18n>TABLE_TITLE} ({mainView>/leadCount})" level="H2"/>
+                        <Title text="{i18n>TABLE_TITLE} ({mainView>/leadCount})" level="H2" />
                         <ToolbarSpacer />
-                        <SegmentedButton 
-                            selectedKey="{mainView>/responsible}" 
-                            selectionChange="onFilterChange"  >
+                        <SegmentedButton selectedKey="{mainView>/responsible}" selectionChange="onFilterChange">
                             <items>
                                 <SegmentedButtonItem text="{i18n>my}" key="my" />
                                 <SegmentedButtonItem text="{i18n>NoFilter}" key="NoFilter" />
@@ -129,46 +128,142 @@
                         </SegmentedButton>
                     </content>
                 </OverflowToolbar>
-		    </headerToolbar>
+            </headerToolbar>
             <columns>
-                <Column><Text text="{i18n>CUSTOMER}"        class="textBold"/></Column>
-                <Column><Text text="{i18n>LEAD_NUMBER}"     class="textBold"/></Column>
-                <Column><Text text="{i18n>BRAND}"           class="textBold"/></Column>
-                <Column><Text text="{i18n>OPEN_DATE}"       class="textBold"/></Column>
-                <Column><Text text="{i18n>CAMPAIGN}"        class="textBold"/></Column>
-                <Column><Text text="{i18n>SLA}"             class="textBold"/></Column>
-                <Column><Text text="{i18n>PERSON_RESPONSIBLE}" class="textBold"/></Column>
-                <Column><Text text="{i18n>RANK}"            class="textBold"/></Column>
-                <Column><Text text="{i18n>STATUS}"          class="textBold"/></Column>
-                <Column><Text text="{i18n>STATUS_REASON}"   class="textBold"/></Column>
-                <Column><Text text="{i18n>FU_DATE}"         class="textBold"/></Column>
+                <Column>
+                    <Button 
+                        text="{i18n>CUSTOMER}" 
+                        class="textBold columnHeaderButton" 
+                        type="Transparent" 
+                        icon="sap-icon://sorting-ranking"
+                        iconFirst="false"
+                        width="100%"
+                        press="onColumnHeader"
+                        custom:sortProperty="ProspectName"/>
+                </Column>
+                <Column>
+                    <Button 
+                        text="{i18n>LEAD_NUMBER}" 
+                        class="textBold columnHeaderButton" 
+                        type="Transparent" 
+                        icon="sap-icon://sorting-ranking"
+                        iconFirst="false"
+                        width="100%"
+                        press="onColumnHeader"
+                        custom:sortProperty="ObjectId"/>
+                </Column>
+                <Column>
+                   <Button 
+                        text="{i18n>BRAND}" 
+                        class="textBold columnHeaderButton" 
+                        type="Transparent" 
+                        icon="sap-icon://sorting-ranking"
+                        iconFirst="false"
+                        width="100%"
+                        press="onColumnHeader"
+                        custom:sortProperty="Brand"/>
+                </Column>
+                <Column>
+                   <Button 
+                        text="{i18n>OPEN_DATE}" 
+                        class="textBold columnHeaderButton" 
+                        type="Transparent" 
+                        icon="sap-icon://sorting-ranking"
+                        iconFirst="false"
+                        width="100%"
+                        press="onColumnHeader"
+                        custom:sortProperty="StartDate"/>
+                </Column>
+                <Column>
+                    <Button 
+                        text="{i18n>CAMPAIGN}" 
+                        class="textBold columnHeaderButton" 
+                        type="Transparent" 
+                        icon="sap-icon://sorting-ranking"
+                        iconFirst="false"
+                        width="100%"
+                        press="onColumnHeader"
+                        custom:sortProperty="CampaignDescription"/>
+                </Column>
+                <Column>
+                    <Text text="{i18n>SLA}" class="textBold" />
+                </Column>
+                <Column>
+                    <Button 
+                        text="{i18n>PERSON_RESPONSIBLE}" 
+                        class="textBold columnHeaderButton" 
+                        type="Transparent" 
+                        icon="sap-icon://sorting-ranking"
+                        iconFirst="false"
+                        width="100%"
+                        press="onColumnHeader"
+                        custom:sortProperty="PartnerRespName"/>
+                </Column>
+                <Column>
+                    <Button 
+                        text="{i18n>RANK}" 
+                        class="textBold columnHeaderButton" 
+                        type="Transparent" 
+                        icon="sap-icon://sorting-ranking"
+                        iconFirst="false"
+                        width="100%"
+                        press="onColumnHeader"
+                        custom:sortProperty="PriorityTxt"/>
+                </Column>
+                <Column>
+                   <Button 
+                        text="{i18n>STATUS}" 
+                        class="textBold columnHeaderButton" 
+                        type="Transparent" 
+                        icon="sap-icon://sorting-ranking"
+                        iconFirst="false"
+                        width="100%"
+                        press="onColumnHeader"
+                        custom:sortProperty="StatusDesc"/>
+                </Column>
+                <Column>
+                   <Button 
+                        text="{i18n>STATUS_REASON}" 
+                        class="textBold columnHeaderButton" 
+                        type="Transparent" 
+                        icon="sap-icon://sorting-ranking"
+                        iconFirst="false"
+                        width="100%"
+                        press="onColumnHeader"
+                        custom:sortProperty="StatusReasonText"/>
+                </Column>
+                <Column>
+                   <Button 
+                        text="{i18n>FU_DATE}" 
+                        class="textBold columnHeaderButton" 
+                        type="Transparent" 
+                        icon="sap-icon://sorting-ranking"
+                        iconFirst="false"
+                        width="100%"
+                        press="onColumnHeader"
+                        custom:sortProperty="ZleadCallBack"/>
+                </Column>
             </columns>
             <items>
                 <ColumnListItem vAlign="Middle">
                     <cells>
-                        <ObjectIdentifier
-                            title="{ProspectName}"
-                            text="{ProspectNumber}"/>
-                        <Link
-                            text="{ObjectId}"
-                            target="_blank"
-                            href="{Url}" />
-                        <f:Avatar src="img/{Brand}.jpg" displaySize="M" displayShape="Square" imageFitType="Contain"></f:Avatar>
+                        <ObjectIdentifier title="{ProspectName}" text="{ProspectNumber}" />
+                        <Link text="{ObjectId}" target="_blank" href="{Url}" />
+                        <f:Avatar src="img/{Brand}.jpg" displaySize="M" displayShape="Square" imageFitType="Contain" />
                         <Text text="{path:'StartDate', 
                             type:'sap.ui.model.type.Date', 
-                            formatOptions : { style:'medium', UTC: true}}"/>
-                        <ObjectIdentifier
-                            title="{CampaignDescription}"
-                            text="{CampaignId}"/>
-                        <ObjectStatus 
-                            state="Information"/>
-                        <Text text="{PartnerRespName}"/>
-                        <Text text="{PriorityTxt}"/>
-                        <Text text="{StatusDesc}"/>
-                        <Text text="{StatusReasonText}"/>
+                            formatOptions : { style:'medium', UTC: true}}" />
+                        <ObjectIdentifier title="{CampaignDescription}" text="{CampaignId}" />
+                        <ObjectStatus state="Information" />
+                        <Text text="{PartnerRespName}" />
+                        <Text text="{PriorityTxt}" />
+                        <Text text="{StatusDesc}" />
+                        <Text text="{StatusReasonText}" />
                         <Text text="{path:'ZleadCallBack', 
                             type:'sap.ui.model.type.Date', 
-                            formatOptions : { pattern:'dd.MM.yyyy HH:MM'}}"/>
+                            formatOptions : { 
+				                pattern: 'dd.MM.yyyy HH:mm'
+                                }}" />
                     </cells>
                 </ColumnListItem>
             </items>
