@@ -15,7 +15,7 @@ sap.ui.define([
         return Controller.extend("zcrmleadslist.controller.Main", {
             onInit: function () {
                 var self = this;
-                var self2 = this;
+
                 this.getView().byId("")
                 this._interval = window.setInterval(self.slaRefresh, 600000, self);
 
