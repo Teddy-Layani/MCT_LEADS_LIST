@@ -11,9 +11,10 @@
         <!-- <l:Grid containerQuery="true" class="sapUiSmallMarginTop"> -->
         <HBox justifyContent="SpaceAround" items="{ path: '/ElementTypeCountSet',
                          filters: [{path : 'ElementType',operator : 'EQ',value1 : 'TILE'}]}">
-            <GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{UiText}" frameType="Auto" press="onPress" headerImage="sap-icon://kpi-managing-my-area">
+            <GenericTile press="filterElementType" class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{UiText}" frameType="Auto" headerImage="sap-icon://kpi-managing-my-area">
                 <TileContent>
-                    <NumericContent value="{LeadCount}" withMargin="true" valueColor="{= ${Color} === 'Green' ? 'Good' : ${Color} === 'Red' ? 'Error' : 'Neutral' }" />
+                    <NumericContent value="{LeadCount}" withMargin="true" valueColor="{= ${Color} === 'Green' ? 'Good' : ${Color} === 'Red' ? 'Error' : 'Neutral' }" 
+                    />
                 </TileContent>
             </GenericTile>
         </HBox>
@@ -55,7 +56,8 @@
                      filters: [{path : 'ElementType',operator : 'EQ',value1 : 'TAB'}]}"
         >
             <items>
-                <SegmentedButtonItem text="{UiText}({LeadCount})" key="{SortOrder}" />
+                <SegmentedButtonItem text="{UiText}({LeadCount})" key="{SortOrder}"
+                                     />
             </items>
         </SegmentedButton>
 
@@ -105,6 +107,14 @@
                 }"
             />
 
+            <VBox alignItems="Center" justifyContent="Center" visible="{mainView>/isManagerSwitchVisible}">
+                <Title level="H3" text="{i18n>isManagerSwitch}" />
+                <Switch state="true" id="isManagerSwitch" customTextOn="{i18n>Yes}" customTextOff="{i18n>No}" change="onFilterChange">
+                    <layoutData>
+                        <FlexItemData growFactor="1" />
+                    </layoutData>
+                </Switch>
+            </VBox>
             <!-- <DatePicker
                 placeholder="{i18n>ENTER_DATE}"
                 change="onFilterChange"
@@ -112,7 +122,7 @@
                 class="sapUiSmallMarginBottom"/> -->
         </HBox>
         <HBox justifyContent="SpaceBetween" class="sapUiSmallMargin" />
-        <Table id="mainLead-table" inset="false" updateFinished="mainLeadUpdateFinished" items="{
+        <Table id="mainLead-table" inset="false" updateStarted="onFilterChange" updateFinished="mainLeadUpdateFinished" items="{
                 path: '/MainLeadSet'
             }">
             <headerToolbar>
@@ -120,10 +130,10 @@
                     <content>
                         <Title text="{i18n>TABLE_TITLE} ({mainView>/leadCount})" level="H2" />
                         <ToolbarSpacer />
-                        <SegmentedButton selectedKey="{mainView>/responsible}" selectionChange="onFilterChange">
+                        <SegmentedButton selectedKey="{mainView>/responsible}" selectionChange="onFilterChange" visible="{= ${mainView>/ShowNoFilter} === true}">
                             <items>
                                 <SegmentedButtonItem text="{i18n>my}" key="my" />
-                                <SegmentedButtonItem text="{i18n>NoFilter}" key="NoFilter" />
+                                <SegmentedButtonItem text="{i18n>NoFilter}" key="NoFilter"/>
                             </items>
                         </SegmentedButton>
                     </content>

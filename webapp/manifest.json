@@ -24,6 +24,15 @@
           "localUri": "localService/metadata.xml",
           "odataVersion": "2.0"
         }
+      },
+      "crossUtilService": {
+        "uri": "/sap/opu/odata/sap/ZCRM_GENERAL_UTIL_SRV/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "2.0"
+        }
       }
     }
   },
@@ -72,6 +81,13 @@
       "": {
         "dataSource": "mainService",
         "preload": true,
+        "settings": {
+          "useBatch": false
+        }
+      },
+      "crossUtil": {
+        "dataSource": "crossUtilService",
+        "preload": false,
         "settings": {
           "useBatch": false
         }

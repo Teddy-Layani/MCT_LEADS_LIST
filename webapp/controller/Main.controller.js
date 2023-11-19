@@ -4,12 +4,13 @@ sap.ui.define([
     "sap/ui/model/FilterOperator",
     "sap/ui/core/ValueState",
     "sap/ui/model/Sorter",
-    "zcrmleadslist/utilities/moment"
+    "zcrmleadslist/utilities/moment",
+    "zcrmleadslist/model/models"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Filter, FilterOperator, ValueState, Sorter) {
+    function (Controller, Filter, FilterOperator, ValueState, Sorter,models) {
         "use strict";
 
         return Controller.extend("zcrmleadslist.controller.Main", {
@@ -18,6 +19,26 @@ sap.ui.define([
                 var self2 = this;
                 this.getView().byId("")
                 this._interval = window.setInterval(self.slaRefresh, 600000, self);
+                
+                if (this.getView().byId("isManagerSwitch"))
+                    this.getView().byId("isManagerSwitch").setState(false);
+
+                if(this.getOwnerComponent().getModel("mainView").getProperty("/isManagerSwitchVisible")== undefined)
+                    this.getOwnerComponent().getModel("mainView").setProperty("/isManagerSwitchVisible",false);
+                
+
+                var sSearch = window.location.search;
+                if(sSearch){
+                    const urlParams = new URLSearchParams(sSearch);
+                    const leadIdParam = urlParams.get("LEADID");
+                    if(leadIdParam){
+                        const leadIdsArray = leadIdParam.split(",");
+                        if(leadIdsArray.length > 0){
+                            this.getOwnerComponent().getModel("mainView").setProperty("/objectIds", leadIdsArray);
+                            //this.onFilterChange();
+                        }
+                    }
+                }
 
                 //  Set HE to momentjs
                 moment.locale('he');
@@ -27,6 +48,7 @@ sap.ui.define([
 
                 this.getOwnerComponent().getModel("mainView").setProperty("/CUSTOMER_descending",  false);
                 this.getOwnerComponent().getModel("mainView").setProperty("/CUSTOMER_ascending",  false);
+
             },
 
             mainLeadUpdateFinished: function (oEvent) {
@@ -90,7 +112,7 @@ sap.ui.define([
                     aFilters.push(new Filter(oTabCondition.FieldName, oTabCondition.Operator, oTabCondition.ValueLow));
                 }
 
-                oTableBinding.filter(aFilters, "Application");
+                oTableBinding.filter(aFilters);//, "Application");
             },
 
             onSort(oEvent){
@@ -125,6 +147,17 @@ sap.ui.define([
                     oTableBinding = this.getView().byId("mainLead-table").getBinding("items"),
                     aFilter = [];
 
+                if (this.getView().byId("isManagerSwitch")){
+                   var state = this.getView().byId("isManagerSwitch").getState();
+                   aFilter.push(new Filter("IsManager", FilterOperator.EQ, state));
+                }
+                    
+
+                if (oModelView.objectIds) {
+                    oModelView.objectIds.forEach((Id)=>{
+                        aFilter.push(new Filter("ObjectId", FilterOperator.EQ, Id));
+                    });
+                }
                 if (oModelView.selectedStatus) {
                     aFilter.push(new Filter("Status", FilterOperator.EQ, oModelView.selectedStatus));
                 }
@@ -309,7 +342,19 @@ sap.ui.define([
                 
                 oTableBinding.sort(oSort);
             },
+            filterElementType: function(oEvent) {
+               let headerName = oEvent.getSource().getBindingContext().getObject().InternalText;
+               let oModelView = this.getOwnerComponent().getModel("mainView").getData(),
+                    oTableBinding = this.getView().byId("mainLead-table").getBinding("items"),
+                    aFilter = [];
 
+                if (headerName) {
+                    aFilter.push(new Filter("Entityname", FilterOperator.EQ, headerName)); 
+                    oTableBinding.filter(aFilter, "Application");
+                }
+
+               //this.resetFilters();
+            },
             onExit: function () {
                 window.clearInterval(this._interval);
             }

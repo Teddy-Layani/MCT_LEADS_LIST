@@ -36,6 +36,8 @@ sap.ui.define([
 
             initModels: function() {
                 this.setModel(models.viewModel("main"), "mainView");
+                models.checkOtherFilter(this.getModel("crossUtil"),this.getModel("mainView"));
+                models.checkIsSlsManager(this.getModel(),this.getModel("mainView"));
             }
         });
     }

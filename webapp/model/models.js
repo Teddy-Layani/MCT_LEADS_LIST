@@ -39,9 +39,30 @@ sap.ui.define([
                     default:
                         break;
                 }
-
                 return new JSONModel(oDefault);    
-            }
+            },
+            checkOtherFilter: function (oDataModel,oViewModel){
+                var DataLoaded = oDataModel.read("/ZUSER_PARAM_CHECKSet('ZMOKED_MNGR')",
+                    {success: function(){
+                        oViewModel.setProperty("/ShowNoFilter",true);
+                    }, error: function(e){
+                        oViewModel.setProperty("/ShowNoFilter",false)
+                    }});
 
-    };
-});
+            },
+            checkIsSlsManager: function (oDataModel,oViewModel){
+                var DataLoaded = oDataModel.read("/UserParamsSet",
+                    {success: function(oData){
+                        filters:[new Filter("Parid", FilterOperator.EQ, "ZIS_SLS_SRV_MANGER")]
+               // this.getOwnerComponent().getModel("mainView").setProperty("/isManagerSwitchVisible",false);
+                        if(oData && oData.length > 0){
+                            if(oData[0].Parva == "X")
+                                oViewModel.setProperty("/isManagerSwitchVisible",true);
+                        }
+                    }, error: function(e){
+                        oViewModel.setProperty("/isManagerSwitchVisible",false);
+                    }});
+
+            }
+        };
+    });
