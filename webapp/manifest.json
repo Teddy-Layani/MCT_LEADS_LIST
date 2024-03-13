@@ -85,6 +85,13 @@
           "useBatch": false
         }
       },
+      "mainModel": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "useBatch": false
+        }
+      },
       "crossUtil": {
         "dataSource": "crossUtilService",
         "preload": false,

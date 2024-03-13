@@ -14,18 +14,30 @@ sap.ui.define([
         "use strict";
 
         return Controller.extend("zcrmleadslist.controller.Main", {
-            onInit: function () {
+            onInit: async function () {
                 var self = this;
                 var self2 = this;
                 this.getView().byId("")
                 this._interval = window.setInterval(self.slaRefresh, 600000, self);
+                debugger;
+                var oModel = this.getOwnerComponent().getModel("mainModel");    
+                try {
+                    this.UserBpData =  await this.loadUserBPData(oModel);
+                    debugger;
+                    // this.getOwnerComponent().getModel("UserBpDataView");
+                    var oUserBpDataModel = this.getOwnerComponent().getModel("UserBpData");
+                    oUserBpDataModel.setData(this.UserBpData);
+                    // var oRespMultibox = this.byId("respMultiBox");
                 
-                if (this.getView().byId("isManagerSwitch"))
-                    this.getView().byId("isManagerSwitch").setState(false);
+                    // if(oRespMultibox)
+                    // {
+                    //     oRespMultibox.setVisible(this.UserBpData.IsManager);
+                    // }
+                    debugger;
 
-                if(this.getOwnerComponent().getModel("mainView").getProperty("/isManagerSwitchVisible")== undefined)
-                    this.getOwnerComponent().getModel("mainView").setProperty("/isManagerSwitchVisible",false);
-                
+                } catch(error){
+                    console.log(error.message);
+                }
 
                 var sSearch = window.location.search;
                 if(sSearch){
@@ -45,39 +57,126 @@ sap.ui.define([
 
                 this.getOwnerComponent().getModel("mainView").setProperty("/beginDate", null);
                 this.getOwnerComponent().getModel("mainView").setProperty("/endDate",  null);
+                this.getOwnerComponent().getModel("mainView").setProperty("/selectedSegmentButton", "4");
+                this.getOwnerComponent().getModel("mainView").setProperty("/selectedSegmentButton", "4");
+
+                let sSelectedTeam = this.UserBpData.IsManager?"true":"false";
+                this.getOwnerComponent().getModel("mainView").setProperty("/selectedTeam", sSelectedTeam);
 
                 this.getOwnerComponent().getModel("mainView").setProperty("/CUSTOMER_descending",  false);
                 this.getOwnerComponent().getModel("mainView").setProperty("/CUSTOMER_ascending",  false);
+                // let  oModelView = this.getOwnerComponent().getModel("mainView").getData(),
+                //      oTableBinding = this.getView().byId("mainLead-table").getBinding("items");
+                
+                // oTableBinding.aFilters.push(new Filter("IsManager", FilterOperator.EQ, oModelView.selectedTeam));
+                // oTableBinding.filter();
+                this.onFilterChange();
+
+
+            },
+            
+            loadUserBPData: async function(oModel) {
+                return new Promise((resolve, reject) => {
+                    oModel.read("/UserBPDataSet",{
+                        success:function(data){
+                            if (data && data.results && data.results.length){
+                                resolve(data.results[0]);                          }
+                            
+                        },
+                        error: function(error){
+                            reject(error);
+                        }
+                    });
+                });
+            },   
+
+            onBeforeRendering:function () {
 
             },
 
+            onAfterRendering:function(){
+
+            },
+            onTabButtonDataRecieved:function(oEvent)
+            {
+                debugger;
+                var oInvisibleButton = this.byId("tabsSegmentedButton").getButtons()[0];
+                if(oInvisibleButton)
+                {
+                    oInvisibleButton.setVisible(false);
+                }
+
+            },
             mainLeadUpdateFinished: function (oEvent) {
                 let oStatus = {},
-                    aStatus = [];
+                    aStatus = this.getOwnerComponent().getModel("mainView").getProperty("/statusValues")?this.getOwnerComponent().getModel("mainView").getProperty("/statusValues"):[],
+                    oServiceEmplnum = {},
+                    aServiceEmplnum = this.getOwnerComponent().getModel("mainView").getProperty("/serviceEmplMultiBox")?this.getOwnerComponent().getModel("mainView").getProperty("/serviceEmplMultiBox"):[],
+                    oRespNum = {},
+                    aRespNum = this.getOwnerComponent().getModel("mainView").getProperty("/respValues")?this.getOwnerComponent().getModel("mainView").getProperty("/respValues"):[],
+                    oCampaign = {},
+                    aCampaign = this.getOwnerComponent().getModel("mainView").getProperty("/campValues")?this.getOwnerComponent().getModel("mainView").getProperty("/campValues"):[];
 
                 this.getOwnerComponent().getModel("mainView").setProperty("/leadCount",
-                    oEvent.getParameter("total")
+                    this.getView().byId("mainLead-table").getBinding("items").iLength
                 );
 
+                
                 oEvent.getSource().getItems().forEach(element => {
                     if (element.getBindingContext()) {
                         const oLead = element.getBindingContext().getObject();
 
-                        oStatus = aStatus.find(function (el) {
-                            return el.key === oLead.Status;
+                        // oStatus = aStatus.find(function (el) {
+                        //     return el.key === oLead.Status;
+                        // });
+
+                        // if (!oStatus && oLead.StatusDesc) {
+                        //     aStatus.push({
+                        //         key: oLead.Status,
+                        //         text: oLead.StatusDesc
+                        //     });
+                        // }
+
+                        oServiceEmplnum = aServiceEmplnum.find(function (el) {
+                            return el.key === oLead.ServiceEmpNum;
                         });
 
-                        if (!oStatus) {
-                            aStatus.push({
-                                key: oLead.Status,
-                                text: oLead.StatusDesc
+                        if (!oServiceEmplnum && oLead.ServiceEmpNum) {
+                            aServiceEmplnum.push({
+                                key: oLead.ServiceEmpNum,
+                                text: oLead.ServiceEmpName
                             });
-                        }
+                        }    
+
+                        oRespNum = aRespNum.find(function (el) {
+                            return el.key === oLead.PartnerRespNum;
+                        });
+
+                        if (!oRespNum && oLead.PartnerRespName) {
+                            aRespNum.push({
+                                key: oLead.PartnerRespNum,
+                                text: oLead.PartnerRespName
+                            });
+                        }        
+                        
+                        oCampaign = aCampaign.find(function (el) {
+                            return el.key === oLead.CampaignId;
+                        });
+
+                        if (!oCampaign && oLead.CampaignDescription) {
+                            aCampaign.push({
+                                key: oLead.CampaignId,
+                                text: oLead.CampaignDescription
+                            });
+                        }                            
                     }
 
                 });
 
                 this.getOwnerComponent().getModel("mainView").setProperty("/statusValues", aStatus);
+                this.getOwnerComponent().getModel("mainView").setProperty("/serviceEmplValues", aServiceEmplnum);
+                this.getOwnerComponent().getModel("mainView").setProperty("/respValues", aRespNum);
+                this.getOwnerComponent().getModel("mainView").setProperty("/campValues", aCampaign);
                 this.getOwnerComponent().getModel("mainView").setProperty("/busy", false);
 
                 // Update SLA Column
@@ -89,30 +188,33 @@ sap.ui.define([
             },
 
             onSelectedButtonChange: function (oEvent) {
-                let oSelectedFilter = oEvent.getParameter("item").getBindingContext().getObject(),
-                    oTableBinding = this.getView().byId("mainLead-table").getBinding("items"),
-                    oModel = this.getOwnerComponent().getModel(),
-                    aFilters = [];
 
-                this.resetFilters();
+                // let oModelView = this.getOwnerComponent().getModel("mainView").getData();
+                this.getOwnerComponent().getModel("elementSelected").setData(oEvent.getParameter("item").getBindingContext().getObject());
+                this.onFilterChange();
 
-                for (let i = 0; i < oSelectedFilter.TabConditionSet.__list.length; i++) {
-                    const oTabCondition = oModel.getProperty("/" + oSelectedFilter.TabConditionSet.__list[i]);
+                // let elementSelected = this.getOwnerComponent().getModel("elementSelected").getData();
+                    
+                //     let headerName = elementSelected.InternalText;
+                    // let oTableBinding = this.getView().byId("mainLead-table").getBinding("items"),
+                    //     aFilter = [];
+                        
+                    // if(oModelView.selectedTeam === "true")
+                    // {
+                    //     aFilter.push(new Filter("Assignto", FilterOperator.EQ, '0002'));
+                    // }
+                    // else
+                    // {
+                    //     aFilter.push(new Filter("Assignto", FilterOperator.EQ, '0001'));
+                    // }
+                    
+                    // if (headerName) {
+                    //     aFilter.push(new Filter("Entityname", FilterOperator.EQ, headerName)); 
+                    //     oTableBinding.filter(aFilter, "Application");
+                    // }
+    
+                    // this.resetFilters();
 
-                    if (oTabCondition.FieldName === "ZleadCallBack" && !(oTabCondition.ValueLow instanceof Date)) {
-                        oTabCondition.ValueLow = new Date(oTabCondition.ValueLow.slice(0, 4),
-                            oTabCondition.ValueLow.slice(4, 6) - 1,
-                            oTabCondition.ValueLow.slice(6, 8),
-                            oTabCondition.ValueLow.slice(8, 10),
-                            oTabCondition.ValueLow.slice(10, 12),
-                            oTabCondition.ValueLow.slice(12, 14))
-
-
-                    }
-                    aFilters.push(new Filter(oTabCondition.FieldName, oTabCondition.Operator, oTabCondition.ValueLow));
-                }
-
-                oTableBinding.filter(aFilters);//, "Application");
             },
 
             onSort(oEvent){
@@ -141,21 +243,72 @@ sap.ui.define([
                 oTableBinding.filter(oSorter, "Application");
             },
             
-
             onFilterChange: function (oEvent) {
                 let oModelView = this.getOwnerComponent().getModel("mainView").getData(),
                     oTableBinding = this.getView().byId("mainLead-table").getBinding("items"),
                     aFilter = [];
-
-                if (this.getView().byId("isManagerSwitch")){
-                   var state = this.getView().byId("isManagerSwitch").getState();
-                   aFilter.push(new Filter("IsManager", FilterOperator.EQ, state));
-                }
                     
+                let elementSelected = this.getOwnerComponent().getModel("elementSelected").getData();
 
+                let headerName = elementSelected.InternalText;
+                if (headerName) {
+                    aFilter.push(new Filter("Entityname", FilterOperator.EQ, headerName)); 
+                }
+                
+                if(oModelView.selectedTeam === "true")
+                {
+                    aFilter.push(new Filter("Assignto", FilterOperator.EQ, '0002'));
+                }
+                else
+                {
+                    aFilter.push(new Filter("Assignto", FilterOperator.EQ, '0001'));
+                }
+
+                var aCampKeys = this.byId("campaignMultiBox").getSelectedKeys();
+
+                for (var i = 0; i < aCampKeys.length; i++) {
+                    aFilter.push(new Filter("CampaignId", FilterOperator.EQ, aCampKeys[i]));
+                }
+
+                var aBrandKeys = this.byId("brandMultiBox").getSelectedKeys();
+
+                for (var i = 0; i < aBrandKeys.length; i++) {
+                    aFilter.push(new Filter("Brand", FilterOperator.EQ, aBrandKeys[i]));
+                }
+
+                var aStatusKeys = this.byId("statusMultiBox").getSelectedKeys();
+
+                for (var i = 0; i < aStatusKeys.length; i++) {
+                    aFilter.push(new Filter("Status", FilterOperator.EQ, aStatusKeys[i]));
+                }
+    
+                var aPriorityKeys = this.byId("importanceMultiBox").getSelectedKeys();
+
+                for (var i = 0; i < aPriorityKeys.length; i++) {
+                    aFilter.push(new Filter("Priority", FilterOperator.EQ, aPriorityKeys[i]));
+                }
+    
+                var aRespKeys = this.byId("respMultiBox").getSelectedKeys();
+
+                for (var i = 0; i < aRespKeys.length; i++) {
+                    aFilter.push(new Filter("PartnerRespNum", FilterOperator.EQ, aRespKeys[i]));
+                }        
+
+                var aServiceEmplKeys = this.byId("serviceEmplMultiBox").getSelectedKeys();
+
+                for (var i = 0; i < aServiceEmplKeys.length; i++) {
+                    aFilter.push(new Filter("ServiceEmpNum", FilterOperator.EQ, aServiceEmplKeys[i]));
+                }     
+
+                var sIndex = 0;
                 if (oModelView.objectIds) {
                     oModelView.objectIds.forEach((Id)=>{
-                        aFilter.push(new Filter("ObjectId", FilterOperator.EQ, Id));
+                        if(sIndex <= 220)
+                          {
+                            aFilter.push(new Filter("ObjectId", FilterOperator.EQ, Id));
+                            sIndex += 1;                            
+                          }
+
                     });
                 }
                 if (oModelView.selectedStatus) {
@@ -177,14 +330,18 @@ sap.ui.define([
                     aFilter.push(new Filter("Assignto", FilterOperator.EQ, "0002"));
                 }
 
-                if (oModelView.beginDate && oModelView.endDate) {                    
+                if (oModelView.beginDate && oModelView.endDate) {       
+                    var dFromDate = moment(oModelView.beginDate).startOf('day').toDate();             
+                    var dToDate = moment(oModelView.endDate).endOf('day').toDate();             
                     aFilter.push(new Filter({
                         path: "FromDate",
                         operator: FilterOperator.BT,
-                        value1: moment(oModelView.beginDate).startOf('day').toDate(),
-                        value2: moment(oModelView.endDate).endOf('day').toDate()
+                        value1: dFromDate,
+                        value2: dToDate
                     }));
                 }
+
+                // this.byId("tabsSegmentedButton").setSelectedKey("0");
 
                 oTableBinding.filter(aFilter, "Application");
             },
@@ -240,8 +397,9 @@ sap.ui.define([
 
                 if (bSegmentedButton) {
                     //  SegmentedButton Filters
-                    this.getOwnerComponent().getModel("mainView").setProperty("/selectedSegmentButton", "4");
+                    this.getOwnerComponent().getModel("mainView").setProperty("/selectedSegmentButton", "0");
                 }
+                this.getOwnerComponent().getModel("elementSelected").setData({});
 
                 //  Date
                 oModelView.setProperty("/beginDate", "");
@@ -252,14 +410,14 @@ sap.ui.define([
                 oModelView.setProperty("/selectedCampaign", "");
                 oModelView.setProperty("/selectedPriority", "");
                 oModelView.setProperty("/selectedBrand", "");
+                // oModelView.setProperty("/objectIds", []);
 
-                // this.getView().byId("filters-id").getItems().forEach(element => {
-                //     if (element instanceof sap.m.ComboBox) {
-                //         element.setSelectedKey("");                        
-                //     }
-                // });
-                // if(oTableBinding)//for init // Don't touch the Binding Here !!!!
-                //     oTableBinding.filter([], "Application");
+                this.byId("campaignMultiBox").clearSelection();
+                this.byId("importanceMultiBox").clearSelection();
+                this.byId("statusMultiBox").clearSelection();
+                this.byId("brandMultiBox").clearSelection();
+                this.byId("respMultiBox").clearSelection();
+                this.byId("serviceEmplMultiBox").clearSelection();
             },
 
             getZleadCallBack: function (oContext) {
@@ -343,17 +501,35 @@ sap.ui.define([
                 oTableBinding.sort(oSort);
             },
             filterElementType: function(oEvent) {
-               let headerName = oEvent.getSource().getBindingContext().getObject().InternalText;
-               let oModelView = this.getOwnerComponent().getModel("mainView").getData(),
-                    oTableBinding = this.getView().byId("mainLead-table").getBinding("items"),
-                    aFilter = [];
+            //    this.resetFilters();
+            this.getOwnerComponent().getModel("mainView").setProperty("/selectedSegmentButton", "0");
+            this.getOwnerComponent().getModel("elementSelected").setData(oEvent.getSource().getBindingContext().getObject());
+            this.onFilterChange();
 
-                if (headerName) {
-                    aFilter.push(new Filter("Entityname", FilterOperator.EQ, headerName)); 
-                    oTableBinding.filter(aFilter, "Application");
-                }
+            //    let elementSelected = this.getOwnerComponent().getModel("elementSelected").getData();
 
-               //this.resetFilters();
+            //    let headerName = elementSelected.InternalText;
+            //    let oModelView = this.getOwnerComponent().getModel("mainView").getData(),
+            //         oTableBinding = this.getView().byId("mainLead-table").getBinding("items"),
+            //         aFilter = [];
+                    
+            //     if(oModelView.selectedTeam === "true")
+            //     {
+            //         aFilter.push(new Filter("Assignto", FilterOperator.EQ, '0002'));
+            //     }
+            //     else
+            //     {
+            //         aFilter.push(new Filter("Assignto", FilterOperator.EQ, '0001'));
+            //     }
+
+            //     if (headerName) {
+            //         aFilter.push(new Filter("Entityname", FilterOperator.EQ, headerName)); 
+            //         oTableBinding.filter(aFilter, "Application");
+            //     }
+                
+            // //    this.byId("tabsSegmentedButton").setSelectedKey("0");
+
+            // //    this.resetFilters();
             },
             onExit: function () {
                 window.clearInterval(this._interval);

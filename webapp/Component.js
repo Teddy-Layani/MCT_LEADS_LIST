@@ -27,17 +27,23 @@ sap.ui.define([
                 // enable routing
                 this.getRouter().initialize();
 
+
                 // set the device model
                 this.setModel(models.createDeviceModel(), "device");
 
                 //  Models Initialization
                 this.initModels();
             },
+            
+            getText: function (sKey, aParameters=[]) {
+                return this.getModel("i18n").getResourceBundle().getText(sKey, aParameters);
+            },
 
             initModels: function() {
                 this.setModel(models.viewModel("main"), "mainView");
-                models.checkOtherFilter(this.getModel("crossUtil"),this.getModel("mainView"));
-                models.checkIsSlsManager(this.getModel(),this.getModel("mainView"));
+                this.setModel(models.viewModel("UserBpData"), "UserBpData");
+                this.setModel(models.viewModel("elementSelected"), "elementSelected");
+                // models.checkOtherFilter(this.getModel("crossUtil"),this.getModel("mainView"));
             }
         });
     }

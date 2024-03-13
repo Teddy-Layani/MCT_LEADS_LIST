@@ -9,8 +9,9 @@
     busy="{mainView>/busy}">
     <Page id="page" title="{i18n>title}">
         <!-- <l:Grid containerQuery="true" class="sapUiSmallMarginTop"> -->
+
         <HBox justifyContent="SpaceAround" items="{ path: '/ElementTypeCountSet',
-                         filters: [{path : 'ElementType',operator : 'EQ',value1 : 'TILE'}]}">
+                        filters: [{path : 'ElementType',operator : 'EQ',value1 : 'TILE'}]}">
             <GenericTile press="filterElementType" class="sapUiTinyMarginBegin sapUiTinyMarginTop tileSize" header="{UiText}" frameType="Auto" headerImage="sap-icon://kpi-managing-my-area">
                 <TileContent>
                     <NumericContent value="{LeadCount}" withMargin="true" valueColor="{= ${Color} === 'Green' ? 'Good' : ${Color} === 'Red' ? 'Error' : 'Neutral' }" 
@@ -47,48 +48,81 @@
             </GenericTile> -->
         <!-- </l:Grid> -->
         <SegmentedButton
+            id="tabsSegmentedButton"
             selectedKey="{mainView>/selectedSegmentButton}"
             width="97%"
             class="sapUiSmallMargin"
             selectionChange="onSelectedButtonChange"
-            items="{ path: '/ElementTypeCountSet',
-                     parameters:{expand : 'TabConditionSet'},
-                     filters: [{path : 'ElementType',operator : 'EQ',value1 : 'TAB'}]}"
+            items="{ path: '/ElementTypeCountSet', 
+                    events: { dataReceived: '.onTabButtonDataRecieved' },
+                    parameters:{expand : 'TabConditionSet'},
+                    filters: [{path : 'ElementType',operator : 'EQ',value1 : 'TAB'}]}"
         >
             <items>
                 <SegmentedButtonItem text="{UiText}({LeadCount})" key="{SortOrder}"
-                                     />
+                                    />
             </items>
         </SegmentedButton>
 
         <HBox id="filters-id" justifyContent="SpaceBetween" class="sapUiSmallMargin">
-            <ComboBox placeholder="{i18n>STATUS}" class="selectRadius" selectedKey="{mainView>/selectedStatus}" items="{mainView>/statusValues}" selectionChange="onFilterChange">
+            <MultiComboBox id="statusMultiBox" placeholder="{i18n>STATUS}" class="selectRadius" 
+                        items="{
+                    path: '/LeadStatusSet',
+                    sorter: { path: 'StatusDesc' }
+                }"    
+             selectionFinish="onFilterChange">
+                <core:Item key="{Status}" text="{StatusDesc}" />
+            </MultiComboBox>
+            <MultiComboBox id="respMultiBox" 
+                            placeholder="{i18n>RESPONSIBLE}" 
+                            class="selectRadius" 
+                            visible="{UserBpData>/IsManager}"
+                            items="{mainView>/respValues}" 
+                            selectionFinish="onFilterChange">
                 <core:Item key="{mainView>key}" text="{mainView>text}" />
-            </ComboBox>
-            <ComboBox placeholder="{i18n>RANK}" class="selectRadius" selectedKey="{mainView>/selectedPriority}" items="{
-					path: '/ImportanceSet',
-					sorter: { path: 'Description' }
-				}" selectionChange="onFilterChange">
+            </MultiComboBox>    
+            <MultiComboBox id="serviceEmplMultiBox" 
+                            placeholder="{i18n>SERVICE_EMPLOYEE}" 
+                            class="selectRadius" 
+                            visible="{UserBpData>/IsManager}"
+                            items="{mainView>/serviceEmplValues}" 
+                            selectionFinish="onFilterChange">
+                <core:Item key="{mainView>key}" text="{mainView>text}" />
+            </MultiComboBox>           
+            <MultiComboBox id="importanceMultiBox" placeholder="{i18n>RANK}" class="selectRadius" items="{
+                    path: '/ImportanceSet',
+                    sorter: { path: 'Description' }
+                }" 
+                selectionFinish="onFilterChange">
+
                 <core:Item key="{Importance_val}" text="{Description}" />
-            </ComboBox>
+            </MultiComboBox>
             <!-- <Input
-				class="sapUiSmallMarginBottom"
-				type="Text"
-				placeholder="{i18n>CAMPAIGN}"
-				showValueHelp="true"
-				valueHelpRequest="handleValueHelpCampaign"/> -->
-            <ComboBox placeholder="{i18n>CAMPAIGN}" class="selectRadius" selectedKey="{mainView>/selectedCampaign}" items="{
-					path: '/CampaignSet',
-					sorter: { path: 'Description' }
-				}" selectionChange="onFilterChange">
+                class="sapUiSmallMarginBottom"
+                type="Text"
+                placeholder="{i18n>CAMPAIGN}"
+                showValueHelp="true"
+                valueHelpRequest="handleValueHelpCampaign"/> -->
+            <!-- <MultiComboBox id="campaignMultiBox" placeholder="{i18n>CAMPAIGN}" class="selectRadius" items="{
+                    path: '/CampaignSet',
+                    sorter: { path: 'Description' }
+                }" selectionFinish="onFilterChange">
                 <core:Item key="{Campaign_id}" text="{Description}" />
-            </ComboBox>
-            <ComboBox placeholder="{i18n>BRAND}" class="selectRadius" selectedKey="{mainView>/selectedBrand}" items="{
-					path: '/BrandSet',
-					sorter: { path: 'Description' }
-				}" selectionChange="onFilterChange">
+            </MultiComboBox> -->
+            <MultiComboBox id="campaignMultiBox" placeholder="{i18n>CAMPAIGN}" class="selectRadius" 
+            items="{mainView>/campValues}"  selectionFinish="onFilterChange">
+                <core:Item key="{mainView>key}" text="{mainView>text}" />
+            </MultiComboBox>
+
+            <MultiComboBox id="brandMultiBox" placeholder="{i18n>BRAND}" class="selectRadius"  
+            items="{
+                    path: '/BrandSet',
+                    sorter: { path: 'Description' }
+                }"                 
+                selectionFinish="onFilterChange">
+
                 <core:Item key="{Brand_code}" text="{Description}" />
-            </ComboBox>
+            </MultiComboBox>
             <Button icon="sap-icon://reset" press="onFilterReset" />
             <DateRangeSelection
                 change="onFilterChange"
@@ -107,24 +141,43 @@
                 }"
             />
 
-            <VBox alignItems="Center" justifyContent="Center" visible="{mainView>/isManagerSwitchVisible}">
-                <Title level="H3" text="{i18n>isManagerSwitch}" />
-                <Switch state="true" id="isManagerSwitch" customTextOn="{i18n>Yes}" customTextOff="{i18n>No}" change="onFilterChange">
+            <Select 
+                id="selectedTeamSelect"
+                class="selectRadius sapUiSmallMarginEnd" 
+                selectedKey="{mainView>/selectedTeam}"
+                visible="{UserBpData>/IsManager}"
+                items="{mainView>/comboBoxTeam}" 
+                change="onFilterChange" >
+                <core:Item key="{mainView>key}" text="{mainView>text}" />
+            </Select>
+            
+            <!-- <HBox alignItems="Center" justifyContent="Center" visible="{UserBpData>/IsManager}">
+                <Switch state="true" enabled="{mainView>/isManagerFilter}" id="isManagerSwitch" customTextOn="{i18n>my}" customTextOff="{i18n>myTeam}" change="onFilterChange">
                     <layoutData>
-                        <FlexItemData growFactor="1" />
+                        <FlexItemData growFactor="5" />
                     </layoutData>
                 </Switch>
-            </VBox>
+            </HBox> -->
             <!-- <DatePicker
                 placeholder="{i18n>ENTER_DATE}"
                 change="onFilterChange"
                 dateValue="{mainView>/date}"
                 class="sapUiSmallMarginBottom"/> -->
         </HBox>
+
         <HBox justifyContent="SpaceBetween" class="sapUiSmallMargin" />
-        <Table id="mainLead-table" inset="false" updateStarted="onFilterChange" updateFinished="mainLeadUpdateFinished" items="{
-                path: '/MainLeadSet'
-            }">
+        <!-- <Table id="mainLead-table" inset="false" updateStarted="onFilterChange" updateFinished="mainLeadUpdateFinished" items="{ -->
+        <Table id="mainLead-table" 
+                inset="false"  
+                updateFinished="mainLeadUpdateFinished" 
+                items="{
+                            path: '/MainLeadSet'
+                    }"
+                growing="true"
+                growingThreshold="400"
+                growingScrollToLoad="false"
+                sticky="HeaderToolbar,InfoToolbar,ColumnHeaders"
+            >
             <headerToolbar>
                 <OverflowToolbar>
                     <content>
@@ -141,7 +194,11 @@
             </headerToolbar>
             <columns>
                 <Column>
-                    <Button 
+                    <Title text="{i18n>CUSTOMER}" 
+                            class="textBold columnHeaderButton blueTitle"
+                             />
+
+                    <!-- <Button 
                         text="{i18n>CUSTOMER}" 
                         class="textBold columnHeaderButton" 
                         type="Transparent" 
@@ -149,8 +206,8 @@
                         iconFirst="false"
                         width="100%"
                         press="onColumnHeader"
-                        custom:sortProperty="ProspectName"/>
-                </Column>
+                        custom:sortProperty="ProspectName"/>-->
+                </Column> 
                 <Column>
                     <Button 
                         text="{i18n>LEAD_NUMBER}" 
@@ -185,7 +242,10 @@
                         custom:sortProperty="StartDate"/>
                 </Column>
                 <Column>
-                    <Button 
+                        <Title text="{i18n>CAMPAIGN}" 
+                            class="textBold columnHeaderButton blueTitle"
+                             />
+                    <!-- <Button 
                         text="{i18n>CAMPAIGN}" 
                         class="textBold columnHeaderButton" 
                         type="Transparent" 
@@ -193,22 +253,23 @@
                         iconFirst="false"
                         width="100%"
                         press="onColumnHeader"
-                        custom:sortProperty="CampaignDescription"/>
+                        custom:sortProperty="CampaignDescription"/> -->
                 </Column>
                 <Column>
-                    <Text text="{i18n>SLA}" class="textBold" />
+                    <Title text="{i18n>SLA}" 
+                        class="textBold columnHeaderButton blueTitle"
+                    />
                 </Column>
                 <Column>
-                    <Button 
-                        text="{i18n>PERSON_RESPONSIBLE}" 
-                        class="textBold columnHeaderButton" 
-                        type="Transparent" 
-                        icon="sap-icon://sorting-ranking"
-                        iconFirst="false"
-                        width="100%"
-                        press="onColumnHeader"
-                        custom:sortProperty="PartnerRespName"/>
+                        <Title text="{i18n>PERSON_RESPONSIBLE}" 
+                            class="textBold columnHeaderButton blueTitle"
+                        />
                 </Column>
+                <Column>
+                    <Title text="{i18n>SERVICE_EMPLOYEE}" 
+                        class="textBold columnHeaderButton blueTitle"
+                    />
+                </Column>                
                 <Column>
                     <Button 
                         text="{i18n>RANK}" 
@@ -266,6 +327,7 @@
                         <ObjectIdentifier title="{CampaignDescription}" text="{CampaignId}" />
                         <ObjectStatus state="Information" />
                         <Text text="{PartnerRespName}" />
+                        <Text text="{ServiceEmpName}" />
                         <Text text="{PriorityTxt}" />
                         <Text text="{StatusDesc}" />
                         <Text text="{StatusReasonText}" />

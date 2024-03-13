@@ -31,11 +31,45 @@ sap.ui.define([
                             beginDate: new Date(),
                             endDate: new Date(),
                             leadCount: 0,
+                            selectedTeam: "false",
+                            comboBoxTeam: [
+                                // { key: true, text: this.getText("my") },
+                                // { key: false, text: this.getText("myTeam") }                                
+                                { key: "true", text: "של הצוות שלי" },
+                                { key: "false", text:"שלי" }
+                            ],   
                             selectedSegmentButton: "4"
                         };
-
+                        
                         break;
-                
+
+                        case "UserBpData":
+                            oDefault    = {
+                                FullName:"",
+                                IsManager: false,
+                                NameFirst:"",
+                                NameLast: "",
+                                Partner: "",
+                                PartnerGuid:"",
+                                Username:""            
+                            };
+                            break;
+                        case "elementSelected":
+                            oDefault = {
+                                AssignedTo:"0000",
+                                Color:"",
+                                Datefilter:null,
+                                ElementType:"",
+                                InternalText:"",
+                                LeadCount:0,
+                                SortOrder: 0,
+                                TabConditionSet:{results: []},
+                                UiText: "",
+                                User:""
+                            }
+
+                            break;
+                          
                     default:
                         break;
                 }
@@ -51,17 +85,17 @@ sap.ui.define([
 
             },
             checkIsSlsManager: function (oDataModel,oViewModel){
-                var DataLoaded = oDataModel.read("/UserParamsSet",
-                    {success: function(oData){
-                        filters:[new Filter("Parid", FilterOperator.EQ, "ZIS_SLS_SRV_MANGER")]
-               // this.getOwnerComponent().getModel("mainView").setProperty("/isManagerSwitchVisible",false);
-                        if(oData && oData.length > 0){
-                            if(oData[0].Parva == "X")
-                                oViewModel.setProperty("/isManagerSwitchVisible",true);
-                        }
-                    }, error: function(e){
-                        oViewModel.setProperty("/isManagerSwitchVisible",false);
-                    }});
+            //     var DataLoaded = oDataModel.read("/UserParamsSet",
+            //         {success: function(oData){
+            //             filters:[new Filter("Parid", FilterOperator.EQ, "ZIS_SLS_SRV_MANGER")]
+            //    // this.getOwnerComponent().getModel("mainView").setProperty("/isManagerSwitchVisible",false);
+            //             if(oData && oData.length > 0){
+            //                 if(oData[0].Parva == "X")
+            //                     oViewModel.setProperty("/isManagerSwitchVisible",true);
+            //             }
+            //         }, error: function(e){
+            //             oViewModel.setProperty("/isManagerSwitchVisible",false);
+            //         }});
 
             }
         };
