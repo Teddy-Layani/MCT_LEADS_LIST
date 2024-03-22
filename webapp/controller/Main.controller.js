@@ -4,6 +4,9 @@ sap.ui.define([
     "sap/ui/model/FilterOperator",
     "sap/ui/core/ValueState",
     "sap/ui/model/Sorter",
+	'sap/ui/export/library',
+	'sap/ui/export/Spreadsheet',
+    'sap/ui/model/odata/v2/ODataModel',
     "zcrmleadslist/utilities/moment",
     "zcrmleadslist/model/models"
 ],
@@ -85,6 +88,32 @@ sap.ui.define([
                         },
                         error: function(error){
                             reject(error);
+                        }
+                    });
+                });
+            },   
+
+            loadMainLeadSet: async function(oModel) {
+                var that = this;
+                return new Promise((resolve, reject) => {
+
+                    let aFilter =  that.getFilters();
+
+                    aFilter.push(new Filter("Excel", FilterOperator.EQ, true));
+                   
+                    oModel.read("/MainLeadSet",
+                        {
+                        filters: aFilter,
+
+                        success:function(data){
+                            if (data && data.results && data.results.length){
+                                resolve(data.results);                         
+                             }
+
+                        },
+                        error: function(error){
+                            reject(error);
+
                         }
                     });
                 });
@@ -242,10 +271,9 @@ sap.ui.define([
                     
                 oTableBinding.filter(oSorter, "Application");
             },
-            
-            onFilterChange: function (oEvent) {
+
+            getFilters: function (oEvent) {
                 let oModelView = this.getOwnerComponent().getModel("mainView").getData(),
-                    oTableBinding = this.getView().byId("mainLead-table").getBinding("items"),
                     aFilter = [];
                     
                 let elementSelected = this.getOwnerComponent().getModel("elementSelected").getData();
@@ -340,8 +368,12 @@ sap.ui.define([
                         value2: dToDate
                     }));
                 }
-
+                return aFilter;
                 // this.byId("tabsSegmentedButton").setSelectedKey("0");
+            },
+            onFilterChange: function (oEvent) {
+                let aFilter = this.getFilters(),
+                oTableBinding = this.getView().byId("mainLead-table").getBinding("items");
 
                 oTableBinding.filter(aFilter, "Application");
             },
@@ -533,7 +565,132 @@ sap.ui.define([
             },
             onExit: function () {
                 window.clearInterval(this._interval);
-            }
+            },
+
+            createColumnConfig: function() {
+                var aCols = [];
+    
+                aCols.push({
+                    label: this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("CUSTOMER"),
+                    property: ['ProspectName'],
+                    type: sap.ui.export.EdmType.String
+                });
+                aCols.push({
+                    label: this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("CUSTOMER_NO"),
+                    property: ['ProspectNumber'],
+                    type: sap.ui.export.EdmType.String
+                });
+    
+                aCols.push({
+                    label: this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("LEAD_NUMBER"),
+                    type: sap.ui.export.EdmType.String,
+                    property: 'ObjectId'
+                });
+  
+    
+                aCols.push({
+                    label: this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("BRAND"),
+                    property: 'Brand',
+                    type: sap.ui.export.EdmType.String
+                });
+
+                aCols.push({
+                    label: this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("OPEN_DATE"),
+                    property: 'StartDate',
+                    type:'sap.ui.model.type.Date', 
+                    formatOptions : { 
+                        pattern: 'dd.MM.yyyy HH:mm'
+                        }
+                });
+
+                aCols.push({
+                    label: this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("CAMPAIGN"),
+                    property: 'CampaignDescription',
+                    type: sap.ui.export.EdmType.String
+                });
+    
+                aCols.push({
+                    label: this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("CAMPAIGN"),
+                    property: 'CampaignId',
+                    type: sap.ui.export.EdmType.String
+                });
+    
+                aCols.push({
+                    label: this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("PERSON_RESPONSIBLE"),
+                    property: 'PartnerRespName',
+                    type: sap.ui.export.EdmType.String 
+                });
+    
+                aCols.push({
+                    label: this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("SERVICE_EMPLOYEE"),
+                    property: 'ServiceEmpName',
+                    type: sap.ui.export.EdmType.String
+                });
+
+                aCols.push({
+                    label: this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("RANK"),
+                    property: 'PriorityTxt',
+                    type: sap.ui.export.EdmType.String
+                });
+
+                aCols.push({
+                    label: this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("STATUS"),
+                    property: 'StatusDesc',
+                    type: sap.ui.export.EdmType.String
+                });
+
+                aCols.push({
+                    label: this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("STATUS_REASON"),
+                    property: 'StatusReasonText',
+                    type: sap.ui.export.EdmType.String
+                });
+            
+                aCols.push({
+                    label: this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("FU_DATE"),
+                    property: 'StartDate',
+                    type:'sap.ui.model.type.Date', 
+                    formatOptions : { 
+                        pattern: 'dd.MM.yyyy HH:mm'
+                        }
+                });
+
+    
+                return aCols;
+            },
+    
+            onExport: async function() {
+                var aCols, oBinding, oSettings, oSheet, oTable;
+
+                aCols = this.createColumnConfig();
+                oBinding = this.getView().byId("mainLead-table").getBinding("items");
+                debugger;
+                var oModel = this.getOwnerComponent().getModel("mainModel");
+                this.getOwnerComponent().getModel("mainView").setProperty("/busy", true);
+  
+                try {
+                    var oData =  await this.loadMainLeadSet(oModel);
+                    this.getOwnerComponent().getModel("mainView").setProperty("/busy", false);
+                    debugger;
+
+                } catch(error){
+                    this.getOwnerComponent().getModel("mainView").setProperty("/busy", false);
+                    console.log(error.message);
+                }
+
+    
+                oSettings = {
+                    workbook: { columns: aCols },
+                    dataSource: oData
+                };
+    
+                oSheet = new sap.ui.export.Spreadsheet(oSettings);
+                oSheet.build()
+                    .then(function() {
+                        MessageToast.show('Spreadsheet export has finished');
+                    }).finally(function() {
+                        oSheet.destroy();
+                    });
+            }            
 
         });
     });

@@ -189,6 +189,8 @@
                                 <SegmentedButtonItem text="{i18n>NoFilter}" key="NoFilter"/>
                             </items>
                         </SegmentedButton>
+					<!-- <ToolbarSpacer />
+					<Button icon="sap-icon://excel-attachment" press="onExport"/> -->
                     </content>
                 </OverflowToolbar>
             </headerToolbar>
