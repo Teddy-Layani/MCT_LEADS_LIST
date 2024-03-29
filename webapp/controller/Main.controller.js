@@ -357,15 +357,15 @@ sap.ui.define([
                 } else if (oModelView.responsible === "NoFilter") {
                     aFilter.push(new Filter("Assignto", FilterOperator.EQ, "0002"));
                 }
+        
+                if (oModelView.beginDate && oModelView.endDate) {   
+                    oModelView.endDate.setHours(23,59,59,0);             
 
-                if (oModelView.beginDate && oModelView.endDate) {       
-                    var dFromDate = moment(oModelView.beginDate).startOf('day').toDate();             
-                    var dToDate = moment(oModelView.endDate).endOf('day').toDate();             
                     aFilter.push(new Filter({
                         path: "FromDate",
                         operator: FilterOperator.BT,
-                        value1: dFromDate,
-                        value2: dToDate
+                        value1: oModelView.beginDate,
+                        value2: oModelView.endDate
                     }));
                 }
                 return aFilter;
